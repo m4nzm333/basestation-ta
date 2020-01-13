@@ -1,0 +1,10 @@
+**** Get Issue Protocol 37 not support from API
+https://github.com/orientechnologies/pyorient/issues/27
+
+Solusi 1 (Gagal) : 
+Pake pyorient v1.5.5
+di pip default cuman pake v1.5.0
+
+Solusi 2 :
+Ganti OrientDB dari v3 turun ke v2
+
