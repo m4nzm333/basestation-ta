@@ -8,3 +8,4 @@ di pip default cuman pake v1.5.0
 Solusi 2 :
 Ganti OrientDB dari v3 turun ke v2
 
+Test
