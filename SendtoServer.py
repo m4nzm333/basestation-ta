@@ -17,7 +17,7 @@ MQTT_Port = 1883
 Keep_Alive_Interval = 45
 
 # Client object
-mqttc = mqtt.Client("Basestation-0001")
+mqttc = mqtt.Client("Basestation-0002")
 
 # Publish Callback
 def on_publish(client, userdata, result):
