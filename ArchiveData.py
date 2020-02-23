@@ -13,10 +13,10 @@ def saveJsonIntoFile(json_string):
 
     now = datetime.datetime.now()
     lastYear = str(now.year)
-    lastMonth = str(now.month)
-    lastDay = str(now.day)
-    lastHour = str(now.hour)
-    lastMinute = str(now.minute)
+    lastMonth = '{:02d}'.format(now.month)
+    lastDay = '{:02d}'.format(now.day)
+    lastHour = '{:02d}'.format(now.hour)
+    lastMinute = '{:02d}'.format(now.minute)
 
     # The path of arcive file should be /home/pi/data/2020/1/12/21
     dir = "/home/pi/data/{:s}/{:s}/{:s}/{:s}/".format(lastYear, lastMonth, lastDay, lastHour)
@@ -28,5 +28,3 @@ def saveJsonIntoFile(json_string):
     fileku.write(json_string)
     fileku.write("\n")
     fileku.close
-
-saveJsonIntoFile('{"temp":"I like it"}')
