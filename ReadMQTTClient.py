@@ -7,9 +7,10 @@
 
 import paho.mqtt.client as mqtt
 import datetime as datetime
+import ArchiveData as archiveData 
 
 # MQTT Setting
-MQTT_Broker = "192.168.1.9"
+MQTT_Broker = "192.168.1.5"
 MQTT_Port = 1883
 Keep_Alive_Interval = 45
 # MQTT multi topic for subscribe
@@ -24,6 +25,7 @@ def on_message(mosq, obj, msg):
     print("Payload   : " + msg.payload.decode('utf-8'))
     print("\n")
     # TODO : Add saveToArchive funtion
+    archiveData.saveJsonIntoFile(msg.payload.decode('utf-8'))
 
 def on_subscribe(mosq, obj, mid, granted_qos):
     print(str(mosq.topic))
@@ -45,14 +47,18 @@ def on_connect(client, userdata, flag, rc):
 print("Connection to Broker with Address " + str(MQTT_Broker) + ":" + str(MQTT_Port))
 print("==================================")
 
-# Assign Event Callbacks
-mqttc.on_message = on_message
-mqttc.on_subscribe = on_subscribe
-mqttc.on_connect = on_connect
 
-# Connect
-mqttc.connect(MQTT_Broker, int(MQTT_Port), int(Keep_Alive_Interval))
-mqttc.subscribe(MQTT_Topic)
+def main():
+    # Assign Event Callbacks
+    mqttc.on_message = on_message
+    mqttc.on_subscribe = on_subscribe
+    mqttc.on_connect = on_connect
 
-#Continue the network loop
-mqttc.loop_forever()
+    # Connect
+    mqttc.connect(MQTT_Broker, int(MQTT_Port), int(Keep_Alive_Interval))
+    mqttc.subscribe(MQTT_Topic)
+
+    #Continue the network loop
+    mqttc.loop_forever()
+
+main()
