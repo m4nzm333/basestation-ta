@@ -1,3 +1,7 @@
+# Note :
+# Untuk saat ini DBTemp tidak akan menggunakan DBMS
+# tetapi akan menggunakan data log
+
 import pyorient
 client = pyorient.OrientDB("localhost", 2424)
 

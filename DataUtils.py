@@ -41,7 +41,8 @@ def receivedJson(jsonData):
     jsonData['status'] = 'received'
     return jsonData
 
-testSensor = receivedStringToJson(dummyString)
-testSending = sendingJson(testSensor)
-testReceived = receivedJson(testSending)
-print(str(testReceived))
+# **Test**
+# testSensor = receivedStringToJson(dummyString)
+# testSending = sendingJson(testSensor)
+# testReceived = receivedJson(testSending)
+# print(str(testReceived))

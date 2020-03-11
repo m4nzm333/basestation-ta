@@ -23,8 +23,8 @@ def saveJsonIntoFile(json_string):
     if not os.path.exists(dir):
         os.makedirs(dir)
 
-    # The filename should be 2019-1-12-21-31-15.json
-    fileku = open(dir+"{:s}-{:s}-{:s}-{:s}-{:s}.json".format(lastYear, lastMonth, lastDay, lastHour, lastMinute), 'a+')
+    # The filename should be 2019-1-12-21-31-15.log
+    fileku = open(dir+"{:s}-{:s}-{:s}-{:s}-{:s}.log".format(lastYear, lastMonth, lastDay, lastHour, lastMinute), 'a+')
     fileku.write(json_string)
     fileku.write("\n")
     fileku.close
