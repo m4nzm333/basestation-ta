@@ -7,12 +7,14 @@
 
 import paho.mqtt.client as mqtt
 import datetime as datetime
+import logging
 
 # Class for Raspberry Subscriber
 class RaspiSubscriber:
 
     # Instance Attribute
     def __init__(self, mqttServer, mqttPort, clientName):
+        logging.basicConfig(filename='subscriber.log', format='%(asctime)s %(message)s', level=logging.DEBUG)
         keepAliveInterval = 45
         mqttTopic = [("temperature", 0),("pressure", 0),("hummidity", 0)]
 
@@ -24,8 +26,12 @@ class RaspiSubscriber:
         mqttClient.on_connect = self.on_connect
 
         # Connect
+        logging.info("Connecting to MQTT Broker({:s}:{:s}).".format(mqttServer, str(mqttPort)))
         print("Connecting to MQTT Broker({:s}:{:s}).".format(mqttServer, str(mqttPort)))
-        mqttClient.connect(mqttServer, mqttPort, keepAliveInterval)
+        try:
+            mqttClient.connect(mqttServer, mqttPort, keepAliveInterval)
+        except:
+            logging.exception("MQTT Broker({:s}:{:s}) connection failed caused by timeout.".format(mqttServer, str(mqttPort)))
         mqttClient.subscribe(mqttTopic)
 
         #Continue the network loop
@@ -33,6 +39,7 @@ class RaspiSubscriber:
     
     # Read Data Function
     def on_message(self, mosq, obj, msg):
+        logging.info("Message received from topic {:s}".format(msg.topic))
         print("============================")
         print("Timestamp : " + str(datetime.datetime.now()))
         print("Topic     : " + msg.topic)
@@ -43,16 +50,22 @@ class RaspiSubscriber:
     # Show error if connection unsuccessful
     def on_connect(self, client, userdata, flag, rc):
         if rc==0:
+            logging.info("Connection successful. Waiting for data.")
             print("Connection successful. Waiting for data.")
         if rc==1:
-            print("Connection refused - incorrect protocol version\n")
+            logging.error("Connection refused - incorrect protocol version.")
+            print("Connection refused - incorrect protocol version")
         if rc==2:
-            print("Connection refused - invalid client identifier\n")
+            logging.error("Connection refused - invalid client identifier.")
+            print("Connection refused - invalid client identifier.")
         if rc==3:
-            print("Connection refused - server unavailable\n")
+            logging.error("Connection refused - server unavailable.")
+            print("Connection refused - server unavailable.")
         if rc==4:
-            print("Connection refused - not authorised\n")
+            logging.error("Connection refused - not authorised.")
+            print("Connection refused - not authorised.")
 
     def on_subscribe(self, mosq, obj, mid, granted_qos):
-        print(str(mosq.topic))
+        logging.info('Subscribe to {:s}'.format(str(mosq.topic)))
+        print('Subscribe to {:s}'.format(str(mosq.topic)))
         pass

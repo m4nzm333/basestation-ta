@@ -1,0 +1,17 @@
+2020-03-11 12:40:59,354 Connecting to MQTT Broker(192.168.1.6:1883).
+2020-03-11 12:42:56,082 Connecting to MQTT Broker(192.168.1.6:1883).
+2020-03-11 12:43:17,116 MQTT Broker(192.168.1.6:1883) connection failed caused by timeout.
+Traceback (most recent call last):
+  File "c:\ProjectTemp\basestation-ta\RaspiSubscriber.py", line 32, in __init__
+    mqttClient.connect(mqttServer, mqttPort, keepAliveInterval)
+  File "C:\Users\unlisted_i\AppData\Local\Programs\Python\Python38\lib\site-packages\paho\mqtt\client.py", line 937, in connect
+    return self.reconnect()
+  File "C:\Users\unlisted_i\AppData\Local\Programs\Python\Python38\lib\site-packages\paho\mqtt\client.py", line 1071, in reconnect
+    sock = self._create_socket_connection()
+  File "C:\Users\unlisted_i\AppData\Local\Programs\Python\Python38\lib\site-packages\paho\mqtt\client.py", line 3522, in _create_socket_connection
+    return socket.create_connection(addr, source_address=source, timeout=self._keepalive)
+  File "C:\Users\unlisted_i\AppData\Local\Programs\Python\Python38\lib\socket.py", line 808, in create_connection
+    raise err
+  File "C:\Users\unlisted_i\AppData\Local\Programs\Python\Python38\lib\socket.py", line 796, in create_connection
+    sock.connect(sa)
+TimeoutError: [WinError 10060] A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond
