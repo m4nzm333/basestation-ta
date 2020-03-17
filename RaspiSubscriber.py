@@ -3,7 +3,6 @@
 # Source : https://github.com/m4nzm333/basestation-ta
 # Ask a question, please contact:
 # e-mail    : irman.mashuri@gmail.com
-# hp/wa     : +6285396397688
 
 import paho.mqtt.client as mqtt
 import datetime as datetime
