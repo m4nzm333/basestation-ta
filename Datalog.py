@@ -5,8 +5,7 @@
 # e-mail    : irman.mashuri@gmail.com
 
 import os
-import datetime
-
+from datetime import datetime
 
 class Datalog:
 
@@ -21,15 +20,10 @@ class Datalog:
     # Output the data (string) into file
     @staticmethod
     def writeStringToFile(data):
-        now = datetime.datetime.now()
+        now = datetime.now()
         dirLoc = "./data/subscriber/{}/{}/{}/{}/{}".format(now.year, now.month, now.day, now.hour, now.minute)
         Datalog.createDirDate(now)
 
-        file = open("{}/{}-{}-{} {}:{}:{}.{}.txt".format(dirLoc, now.year, now.month, now.day, now.hour, now.minute, now.second, now.microsecond), "a")
-        file.write(data)
+        file = open("{}/{}txt".format(dirLoc, now.strftime("%Y-%m-%d %H:%M:%S")), "a")
+        file.write(data+'\n')
         file.close()
-    
-    
-        
-
-Datalog.writeStringToFile("This is Data")
