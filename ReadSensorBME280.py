@@ -6,7 +6,6 @@
 # Source : https://github.com/m4nzm333/basestation-ta
 # Ask a question, please contact:
 # e-mail    : irman.mashuri@gmail.com
-# hp/wa     : +6285396397688
 
 import smbus2
 import bme280
