@@ -8,6 +8,11 @@ from RaspiSubscriber import RaspiSubscriber
 from RaspiPublisher import RaspiPublisher
 import time
 
+# Debug
+import random
+from datetime import datetime
+from Datalog import Datalog
+
 def main():
     raspiSubscriber = RaspiSubscriber('192.168.1.7', 1883, "Basestation-001")
     print("python main function")
@@ -18,8 +23,24 @@ def publish():
         print("Python Raspi Publisher Execute")
         raspiPublisher.publish("temp", "This is message")
         time.sleep(5)
-    
 
+
+# ----------------
+#      DEBUG
+# ----------------
+
+# Datalog
+def writeStringToFileDebug():
+    now = datetime.now()
+    while True:
+        print("Debugging : Datalog.writeStringToFile")
+        Datalog.writeStringToFile("abc,{},-5.209925,119.473513,{}".format(str(random.uniform(28.0, 33.5))[:5], now.strftime("%Y-%m-%d %H:%M:%S.%f")))
+        time.sleep(0.2)
+
+
+# ----------------
+#       MAIN
+# ----------------
 if __name__ == '__main__':
-    main()
+    writeStringToFileDebug()
 
