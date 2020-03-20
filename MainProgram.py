@@ -31,11 +31,11 @@ def publish():
 
 # Datalog
 def writeStringToFileDebug():
-    now = datetime.now()
     while True:
+        now = datetime.now()
         print("Debugging : Datalog.writeStringToFile")
         Datalog.writeStringToFile("abc,{},-5.209925,119.473513,{}".format(str(random.uniform(28.0, 33.5))[:5], now.strftime("%Y-%m-%d %H:%M:%S.%f")))
-        time.sleep(0.2)
+        time.sleep(0.1)
 
 
 # ----------------
