@@ -13,7 +13,7 @@ class RaspiSubscriber:
 
     # Instance Attribute
     def __init__(self, mqttServer, mqttPort, clientName):
-        logging.basicConfig(filename='log/subscriber.log', format='%(asctime)s %(message)s', level=logging.DEBUG)
+        logging.basicConfig(filename='./log/subscriber.log', format='%(asctime)s %(message)s', level=logging.DEBUG)
         keepAliveInterval = 45
         mqttTopic = [("temperature", 0),("pressure", 0),("hummidity", 0)]
 
