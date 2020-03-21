@@ -35,6 +35,26 @@ class DataUtils:
             keyValSplited = splited.split('=')
             dicData[keyValSplited[0]] = keyValSplited[1]
         return dicData
+    
+    # Check if data is not negative or 0 (data  = dictionary)
+    @staticmethod
+    def checkDataValid(data):
+        # TODO : Fix the filter paramter
+        # Check Temperature
+        if 'temp' in data:
+            if float(data['temp']) <= 0:
+                return False
+        # Check Hummidity
+        if 'hummidity' in data:
+            if float(data['pressure']) <= 0:
+                return False
+        # Check Pressure
+        if 'pressure' in data:
+            if float(data['pressure']) <= 0:
+                return False
+        # If Valid Return True
+        return True
+
 
 # Debug
 now = datetime.now()
@@ -44,5 +64,8 @@ dataDummy2 = "abc,{},{}".format(str(random.uniform(28.0, 33.5))[:5], now.strftim
 # print("Debugging : DataUtils.subscriberPayloadToString")
 # print(DataUtils.subscriberPayloadToString("temp", dataDummy2))
 
-print("Debugging : DataUtils.stringToDictionary")
-print(DataUtils.stringToDictionary(DataUtils.subscriberPayloadToString("temp", dataDummy2)))
+# print("Debugging : DataUtils.stringToDictionary")
+# print(DataUtils.che(DataUtils.subscriberPayloadToString("temp", dataDummy2)))
+
+print("Debugging : DataUtils.checkDataValid")
+print(DataUtils.checkDataValid(DataUtils.stringToDictionary(DataUtils.subscriberPayloadToString("temp", dataDummy))))
