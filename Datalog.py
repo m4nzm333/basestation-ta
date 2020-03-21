@@ -56,3 +56,42 @@ class Datalog:
             return lastFile.readlines()
         except:
             return []
+
+    # Delete Last File and Empty Directory
+    @staticmethod
+    def deleteLastData():
+        try:
+            os.unlink(Datalog.getDirLastData())
+            files = os.listdir('./data/subscriber')
+            year = os.listdir('./data/subscriber/{}'.format(files[0]))
+            year.sort()
+            month = os.listdir('./data/subscriber/{}/{}'.format(files[0], year[0]))
+            month.sort()
+            day = os.listdir('./data/subscriber/{}/{}/{}'.format(files[0], year[0], month[0]))
+            day.sort()
+            hour = os.listdir('./data/subscriber/{}/{}/{}/{}'.format(files[0], year[0], month[0], day[0]))
+            hour.sort()
+            minute = os.listdir('./data/subscriber/{}/{}/{}/{}/{}'.format(files[0], year[0], month[0], day[0], hour[0]))
+            minute.sort()
+
+            # Delete directory if Empty and Re-listing directory file
+            if len(minute) == 0:
+                os.rmdir('./data/subscriber/{}/{}/{}/{}/{}'.format(files[0], year[0], month[0], day[0], hour[0]))
+                hour = os.listdir('./data/subscriber/{}/{}/{}/{}'.format(files[0], year[0], month[0], day[0]))
+                hour.sort()
+            if len(hour) == 0:
+                os.rmdir('./data/subscriber/{}/{}/{}/{}'.format(files[0], year[0], month[0], day[0]))
+                day = os.listdir('./data/subscriber/{}/{}/{}'.format(files[0], year[0], month[0]))
+                day.sort()
+            if len(day) == 0:
+                os.rmdir('./data/subscriber/{}/{}/{}'.format(files[0], year[0], month[0]))
+                month = os.listdir('./data/subscriber/{}/{}'.format(files[0], year[0]))
+                month.sort()
+            if len(month) == 0:
+                os.rmdir('./data/subscriber/{}/{}'.format(files[0], year[0]))
+                year = os.listdir('./data/subscriber/{}'.format(files[0]))
+                year.sort()
+            if len(month) == 0:
+                os.rmdir('./data/subscriber/{}'.format(files[0]))
+        except:
+            pass
