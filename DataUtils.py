@@ -17,8 +17,7 @@ class DataUtils:
     # id=abc,temp=xx,long=xxx.xxx,lat=xxx.xxx,timestamp=yyyy-mm-dd HH:MM:ss.sss
     @staticmethod
     def subscriberPayloadToString(topic, data):
-        delimiter = data.split(',') 
-        dataRaw = "id={},{}={},".format(delimiter[0], topic, delimiter[1])
+        delimiter = data.split(',')
         # Check if 3rd data is timestamp
         try:
             datetime.strptime(delimiter[2], "%Y-%m-%d %H:%M:%S.%f")
@@ -26,9 +25,24 @@ class DataUtils:
         except:
             return "id={},{}={},long={},lat={},timestamo={}".format(delimiter[0], topic, delimiter[1], delimiter[2], delimiter[3], delimiter[4])
     
+    # Convert Raw String to Dictionary (JSON like Python)
+    # id=abc,temp=xx,long=xxx.xxx,lat=xxx.xxx,timestamp=yyyy-mm-dd HH:MM:ss.sss
+    @staticmethod
+    def stringToDictionary(data):
+        dicData = {}
+        keyVal = data.split(',')
+        for splited in keyVal:
+            keyValSplited = splited.split('=')
+            dicData[keyValSplited[0]] = keyValSplited[1]
+        return dicData
+
 # Debug
-# now = datetime.now()
+now = datetime.now()
+dataDummy = "abc,{},-5.209925,119.473513,{}".format(str(random.uniform(28.0, 33.5))[:5], now.strftime("%Y-%m-%d %H:%M:%S.%f"))
+dataDummy2 = "abc,{},{}".format(str(random.uniform(28.0, 33.5))[:5], now.strftime("%Y-%m-%d %H:%M:%S.%f"))
+
 # print("Debugging : DataUtils.subscriberPayloadToString")
-# dataDummy = "abc,{},-5.209925,119.473513,{}".format(str(random.uniform(28.0, 33.5))[:5], now.strftime("%Y-%m-%d %H:%M:%S.%f"))
-# dataDummy2 = "abc,{},{}".format(str(random.uniform(28.0, 33.5))[:5], now.strftime("%Y-%m-%d %H:%M:%S.%f"))
 # print(DataUtils.subscriberPayloadToString("temp", dataDummy2))
+
+print("Debugging : DataUtils.stringToDictionary")
+print(DataUtils.stringToDictionary(DataUtils.subscriberPayloadToString("temp", dataDummy2)))
