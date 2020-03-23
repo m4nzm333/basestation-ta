@@ -41,12 +41,12 @@ class DataUtils:
     def checkDataValid(data):
         # TODO : Fix the filter paramter
         # Check Temperature
-        if 'temp' in data:
-            if float(data['temp']) <= 0:
+        if 'temperature' in data:
+            if float(data['temperature']) <= 0:
                 return False
         # Check Hummidity
         if 'hummidity' in data:
-            if float(data['pressure']) <= 0:
+            if float(data['hummidity']) <= 0:
                 return False
         # Check Pressure
         if 'pressure' in data:
@@ -57,9 +57,9 @@ class DataUtils:
 
 
 # Debug
-now = datetime.now()
-dataDummy = "abc,{},-5.209925,119.473513,{}".format(str(random.uniform(28.0, 33.5))[:5], now.strftime("%Y-%m-%d %H:%M:%S.%f"))
-dataDummy2 = "abc,{},{}".format(str(random.uniform(28.0, 33.5))[:5], now.strftime("%Y-%m-%d %H:%M:%S.%f"))
+# now = datetime.now()
+# dataDummy = "abc,{},-5.209925,119.473513,{}".format(str(random.uniform(28.0, 33.5))[:5], now.strftime("%Y-%m-%d %H:%M:%S.%f"))
+# dataDummy2 = "abc,{},{}".format(str(random.uniform(28.0, 33.5))[:5], now.strftime("%Y-%m-%d %H:%M:%S.%f"))
 
 # print("Debugging : DataUtils.subscriberPayloadToString")
 # print(DataUtils.subscriberPayloadToString("temp", dataDummy2))
@@ -67,5 +67,5 @@ dataDummy2 = "abc,{},{}".format(str(random.uniform(28.0, 33.5))[:5], now.strftim
 # print("Debugging : DataUtils.stringToDictionary")
 # print(DataUtils.che(DataUtils.subscriberPayloadToString("temp", dataDummy2)))
 
-print("Debugging : DataUtils.checkDataValid")
-print(DataUtils.checkDataValid(DataUtils.stringToDictionary(DataUtils.subscriberPayloadToString("temp", dataDummy))))
+# print("Debugging : DataUtils.checkDataValid")
+# print(DataUtils.checkDataValid(DataUtils.stringToDictionary(DataUtils.subscriberPayloadToString("temp", dataDummy))))
