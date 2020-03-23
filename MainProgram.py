@@ -17,7 +17,7 @@ from Datalog import Datalog
 
 # Main function for subscriber
 def subscribe():
-    raspiSubscriber = RaspiSubscriber('192.168.1.7', 1883, "Basestation-001")
+    raspiSubscriber = RaspiSubscriber('192.168.1.24', 1883, "Basestation-001")
     print("python main function")
 
 # Main function for publisher
@@ -40,11 +40,11 @@ def publish():
 def main():
     # Function
     p1 = Process(target=subscribe)
-    p2 = Process(target=publish)
+    # p2 = Process(target=publish)
     p1.start()
-    p2.start()
+    # p2.start()
     p1.join()
-    p2.join()
+    # p2.join()
 
 # ----------------
 #       MAIN
