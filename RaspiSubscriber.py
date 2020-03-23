@@ -8,13 +8,16 @@ import paho.mqtt.client as mqtt
 import datetime as datetime
 import logging
 
+from DataUtils import DataUtils
+from Datalog import Datalog
+
 # Class for Raspberry Subscriber
 class RaspiSubscriber:
 
     # Instance Attribute
     def __init__(self, mqttServer, mqttPort, clientName):
         logging.basicConfig(filename='./log/subscriber.log', format='%(asctime)s %(message)s', level=logging.DEBUG)
-        keepAliveInterval = 45
+        keepAliveInterval = 30
         mqttTopic = [("temperature", 0),("pressure", 0),("hummidity", 0)]
 
         mqttClient = mqtt.Client(clientName)
@@ -38,13 +41,11 @@ class RaspiSubscriber:
     
     # Read Data Function
     def on_message(self, mosq, obj, msg):
-        logging.info("Message received from topic {:s}".format(msg.topic))
-        print("============================")
-        print("Timestamp : " + str(datetime.datetime.now()))
-        print("Topic     : " + msg.topic)
-        print("Payload   : " + msg.payload.decode('utf-8'))
-        print("\n")
-        # TODO : Add saveToArchive funtion
+        print("Data from topic={}".format(msg.topic))
+        rawMsg = DataUtils.subscriberPayloadToString(msg.topic, msg.payload.decode('utf-8'))
+        dicMsg = DataUtils.stringToDictionary(rawMsg)
+        if DataUtils.checkDataValid(dicMsg):
+            Datalog.writeStringToFile(rawMsg)
 
     # Show error if connection unsuccessful
     def on_connect(self, client, userdata, flag, rc):
