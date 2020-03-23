@@ -8,39 +8,46 @@ from RaspiSubscriber import RaspiSubscriber
 from RaspiPublisher import RaspiPublisher
 import time
 
+from multiprocessing import Process
+
 # Debug
 import random
 from datetime import datetime
 from Datalog import Datalog
 
-def main():
+# Main function for subscriber
+def subscribe():
     raspiSubscriber = RaspiSubscriber('192.168.1.7', 1883, "Basestation-001")
     print("python main function")
 
+# Main function for publisher
 def publish():
     raspiPublisher = RaspiPublisher('192.168.1.7', 1883, "Basestation-002")
+
+    # Still debuging
     while True:
-        print("Python Raspi Publisher Execute")
-        raspiPublisher.publish("temp", "This is message")
-        time.sleep(5)
+        if raspiPublisher.mqttClient.is_connected:
+            now = datetime.now()
+            dataDummy = "abc,{},-5.209925,119.473513,{}".format(str(random.uniform(28.0, 33.5))[:5], now.strftime("%Y-%m-%d %H:%M:%S.%f"))
 
+            raspiPublisher.publish("temperature", dataDummy)
+            time.sleep(1)
+        else:
+            raspiPublisher = RaspiPublisher('192.168.1.7', 1883, "Basestation-002")
+            time.sleep(1)
 
-# ----------------
-#      DEBUG
-# ----------------
-
-# Datalog
-def writeStringToFileDebug():
-    while True:
-        now = datetime.now()
-        print("Debugging : Datalog.writeStringToFile")
-        Datalog.writeStringToFile("abc,{},-5.209925,119.473513,{}".format(str(random.uniform(28.0, 33.5))[:5], now.strftime("%Y-%m-%d %H:%M:%S.%f")))
-        time.sleep(0.1)
-
+# Main function for run all function at the same time (Multiprocessing)
+def main():
+    # Function
+    p1 = Process(target=subscribe)
+    p2 = Process(target=publish)
+    p1.start()
+    p2.start()
+    p1.join()
+    p2.join()
 
 # ----------------
 #       MAIN
 # ----------------
 if __name__ == '__main__':
-    writeStringToFileDebug()
-
+    main()
