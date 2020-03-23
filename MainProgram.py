@@ -21,10 +21,8 @@ def subscribe():
     raspiSubscriber = RaspiSubscriber('127.0.0.1', 1883, "localSubsciber")
 
 # Main function for publisher
-def publish():
+def publishSensor():
     raspiPublisher = RaspiPublisher('127.0.0.1', 1883, "localPublisher")
-
-    # Still debuging
     while True:
         if raspiPublisher.mqttClient.is_connected:
             now = datetime.now()
@@ -39,11 +37,13 @@ def publish():
             raspiPublisher = RaspiPublisher('127.0.0.1', 1883, "localPubliser")
             time.sleep(1)
 
+# TODO: Make publisher for Server
+
 # Main function for run all function at the same time (Multiprocessing)
 def main():
     # Function
     p1 = Process(target=subscribe)
-    p2 = Process(target=publish)
+    p2 = Process(target=publishSensor)
     p1.start()
     p2.start()
     p1.join()
