@@ -10,28 +10,26 @@
 import smbus2
 import bme280
 
-# Address I2C
-port = 1
-address = 0x76
-bus = smbus2.SMBus(port)
+class SensorBME280:
 
-import paho.mqtt.client as mqtt
-import datetime as datetime
-from time import sleep
-# For testcase, delete later
-from random import randint
+    # Address I2C
+    port = 1
+    address = 0x76
+    bus = smbus2.SMBus(port)
+    # Get Data from Sensor
+    calibration_params = bme280.load_calibration_params(bus, address)
 
-# Get Data from Sensor
-calibration_params = bme280.load_calibration_params(bus, address)
+    @staticmethod
+    def getTemperature(self):
+        data = bme280.sample(self.bus, self.address, self.calibration_params)
+        return data.temperature
 
-def getTemperature():
-    data = bme280.sample(bus, address, calibration_params)
-    return data.temperature
-
-def getPressure():
-    data = bme280.sample(bus, address, calibration_params)
-    return data.pressure
-
-def getHummidity():
-    data = bme280.sample(bus, address, calibration_params)
-    return data.humidity
+    @staticmethod
+    def getPressure(self):
+        data = bme280.sample(self.bus, self.address, self.calibration_params)
+        return data.pressure
+        
+    @staticmethod
+    def getHummidity(self):
+        data = bme280.sample(self.bus, self.address, self.calibration_params)
+        return data.humidity
