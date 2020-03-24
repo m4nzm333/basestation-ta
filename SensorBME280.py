@@ -9,47 +9,38 @@
 
 import smbus2
 import bme280
+import logging
 
 class SensorBME280:
 
-    @staticmethod
-    def getTemperature():
+    port = 1
+    address = 0x76
+    bus = smbus2.SMBus(port)
+    calibration_params = bme280.load_calibration_params(bus, address)
+
+    def __init__(self):
+        logging.basicConfig(filename='./log/bme280.log', format='%(asctime)s %(message)s', level=logging.DEBUG)
+            
+    def getTemperature(self):
         try:
-            # Address I2C
-            port = 1
-            address = 0x76
-            bus = smbus2.SMBus(port)
-            # Set Callibration
-            calibration_params = bme280.load_calibration_params(bus, address)
-            data = bme280.sample(bus, address, calibration_params)
+            data = bme280.sample(self.bus, self.address, self.calibration_params)
             return data.temperature
         except:
+            logging.exception("BME280: Get temperature failed")
             return 0
-
-    @staticmethod
-    def getPressure():
+            
+    def getPressure(self):
         try:
-            # Address I2C
-            port = 1
-            address = 0x76
-            bus = smbus2.SMBus(port)
-            # Set Callibration
-            calibration_params = bme280.load_calibration_params(bus, address)
-            data = bme280.sample(bus, address, calibration_params)
+            data = bme280.sample(self.bus, self.address, self.calibration_params)
             return data.pressure
         except:
+            logging.exception("BME280: Get pressure failed")
             return 0
-
-    @staticmethod
-    def getHummidity():
+            
+    def getHummidity(self):
         try:
-            # Address I2C
-            port = 1
-            address = 0x76
-            bus = smbus2.SMBus(port)
-            # Set Callibration
-            calibration_params = bme280.load_calibration_params(bus, address)
-            data = bme280.sample(bus, address, calibration_params)
+            data = bme280.sample(self.bus, self.address, self.calibration_params)
+            logging.exception("BME280: Get hummidity failed")
             return data.humidity
         except:
             return 0
