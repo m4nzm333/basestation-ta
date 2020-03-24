@@ -41,7 +41,7 @@ class RaspiSubscriber:
     
     # Read Data Function
     def on_message(self, mosq, obj, msg):
-        print("Data from topic={}".format(msg.topic))
+        print("Subscriber= Topic={} ; Message ={}".format(msg.topic, msg.payload.decode('utf-8')))
         rawMsg = DataUtils.subscriberPayloadToString(msg.topic, msg.payload.decode('utf-8'))
         dicMsg = DataUtils.stringToDictionary(rawMsg)
         if DataUtils.checkDataValid(dicMsg):
@@ -68,4 +68,3 @@ class RaspiSubscriber:
     def on_subscribe(self, mosq, obj, mid, granted_qos):
         logging.info('Subscribe to {:s}'.format(str(mosq.topic)))
         print('Subscribe to {:s}'.format(str(mosq.topic)))
-        pass
