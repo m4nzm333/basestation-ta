@@ -52,12 +52,20 @@ class RaspiPublisher:
             print("Connection refused - not authorized.")
     
     def on_publish(self, client, userdata, result):
-        logging.error("Data published")
-        print("Data published \n" + str(userdata))
         pass
 
     def publish(self, topic, message):
         try:
             self.mqttClient.publish(topic, message, 0)
+            print("Published = Topic: {}; Message: {}".format(topic, message))
+            #logging.info("Publish Success")
         except:
             logging.exception("Publish Failed")
+    
+    def publishWithReliable(self, topic, message):
+        try:
+            self.mqttClient.publish(topic, message, 2)
+            print("Published QoS 2 = Topic: {}; Message: {}".format(topic, message))
+            #logging.info("Publish QoS 2 Success")
+        except:
+            logging.exception("Publish QoS 2 Failed")
