@@ -47,19 +47,19 @@ class Datalog:
 
             return './data/subscriber/{}/{}/{}/{}/{}/{}'.format(files[0], year[0], month[0], day[0], hour[0], minute[0])
         except:
-            return False
+            return 'False'
     
     # Get array the oldest file content
     @staticmethod
     def getArrayLastData():
-        try:
+        if Datalog.getDirLastData() != 'False':
             if Datalog.checkFileUsed(Datalog.getDirLastData()) == False:
                 lastFile = open(Datalog.getDirLastData(), "r")
                 lastData = lastFile.readlines()
                 return lastData
             else:
                 return []
-        except:
+        else:
             return []
 
     # Delete Last File and Empty Directory

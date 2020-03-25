@@ -21,28 +21,14 @@ def subscribe():
 
 # Main function for publisher
 def publishTempToServer():
-    raspiPublisher = RaspiPublisher('192.168.1.7', 1883, "Omaera")
-    # Exception for not passing False on loop
-    #raspiPublisher.publishWithReliable('data', 'this is data')
-    # while True:
-    #     try:    
-    #         lastArray = Datalog.getArrayLastData()
-    #         # Loop foreach data in Array
-    #         for data in lastArray:
-    #             # Check if connection Establish
-    #             # while raspiPublisher.mqttClient.is_connected == False:
-    #             #     raspiPublisher.mqttClient.disconnect()
-    #             #     raspiPublisher = RaspiPublisher('192.168.1.7', 1883, "Raspi4-C4")
-    #             raspiPublisher.publishWithReliable('data', data)
-    #             time.sleep(0.5)
-    #         Datalog.deleteLastData()
-    #         time.sleep(0.5)
-    #     # Program wont close even using Ctrl + C to Interupt
-    #     # So I'm made a Spesific Exception
-    #     except KeyboardInterrupt:
-    #         sys.exit()
-    #     except:
-    #         pass
+    raspiPublisher = RaspiPublisher('192.168.1.7', 1883, "Raspi4-C4")
+    while 1:
+        lastArray = Datalog.getArrayLastData()
+        # # Loop foreach data in Array
+        for data in lastArray:
+            raspiPublisher.publish('data', data)
+            time.sleep(0.5)
+        Datalog.deleteLastData()
 
 # Get Data from Local Sensor
 def archiveLocalSensor():
@@ -68,18 +54,30 @@ def archiveLocalSensor():
         led.off()
         time.sleep(4.5)
 
+# TODO: Make publisher for Server
+
 # Main function for run all function at the same time (Multiprocessing)
 def main():
+    try:
     # Function
     #p1 = Process(target=subscribe)
-    #p2 = Process(target=archiveLocalSensor)
-    p3 = Process(target=publishTempToServer)
-    #p1.start()
-    #p2.start()
-    p3.start()
-    #p1.join()
-    #p2.join()
-    p3.join()
+        p2 = Process(target=archiveLocalSensor)
+        p3 = Process(target=publishTempToServer)
+        #p1.start()
+        p2.start()
+        p3.start()
+        #p1.join()
+        p2.join()
+        p3.join()
+    except KeyboardInterrupt:
+        # p1.terminate
+        p2.terminate
+        p3.terminate
+        # p1.kill
+        p2.kill
+        p3.kill
+
+
 
 # ----------------
 #       MAIN
