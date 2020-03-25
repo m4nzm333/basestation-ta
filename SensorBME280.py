@@ -40,7 +40,7 @@ class SensorBME280:
     def getHummidity(self):
         try:
             data = bme280.sample(self.bus, self.address, self.calibration_params)
-            logging.exception("BME280: Get hummidity failed")
             return data.humidity
         except:
+            logging.exception("BME280: Get hummidity failed")
             return 0
