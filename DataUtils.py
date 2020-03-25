@@ -67,6 +67,19 @@ class DataUtils:
         }
         return switcher.get(name, True)
 
+    # Method for prepare data subscribe => Dictionary
+    # {topic=xxx, message=xxx}
+    @staticmethod
+    def getDicToPublish(stringRaw):
+        dicData = DataUtils.stringToDictionary(stringRaw)
+        message = ''
+        keyDic = []
+        message = []
+        for key, value in dicData.items():
+            keyDic.append(key)
+            message.append(value)
+        return {'topic':keyDic[1], 'message':','.join(message)}
+
 # Debug
 # now = datetime.now()
 # dataDummy = "abc,{},-5.209925,119.473513,{}".format(str(random.uniform(28.0, 33.5))[:5], now.strftime("%Y-%m-%d %H:%M:%S.%f"))
