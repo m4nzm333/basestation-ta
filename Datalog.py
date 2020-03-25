@@ -6,6 +6,8 @@
 
 import os
 from datetime import datetime
+import psutil
+import time
 
 class Datalog:
 
@@ -23,7 +25,6 @@ class Datalog:
         now = datetime.now()
         dirLoc = "./data/subscriber/{}/{}/{}/{}/{}".format(now.year, now.month, now.day, now.hour, now.minute)
         Datalog.createDirDate(now)
-
         file = open("{}/{}.txt".format(dirLoc, now.strftime("%Y-%m-%d %H:%M:%S")), "a")
         file.write(data+'\n')
         file.close()
@@ -52,8 +53,12 @@ class Datalog:
     @staticmethod
     def getArrayLastData():
         try:
-            lastFile = open(Datalog.getDirLastData(), "r")
-            return lastFile.readlines()
+            if Datalog.checkFileUsed(Datalog.getDirLastData()) == False:
+                lastFile = open(Datalog.getDirLastData(), "r")
+                lastData = lastFile.readlines()
+                return lastData
+            else:
+                return []
         except:
             return []
 
@@ -95,3 +100,23 @@ class Datalog:
                 os.rmdir('./data/subscriber/{}'.format(files[0]))
         except:
             pass
+    
+    # Check if current file not in use
+    @staticmethod
+    def checkFileUsed(fpath):
+        for proc in psutil.process_iter():
+            try:
+                for item in proc.open_files():
+                    if fpath == item.path:
+                        print(fpath)
+                        return True
+            except Exception:
+                pass
+        return False
+
+# fullPath = '/home/pi/Documents/basestation-ta/data/subscriber/2020/3/25/23/43/2020-03-25 23:43:42.txt'
+# fileOpen = open(fullPath, 'r')
+# print(Datalog.checkFileUsed(fullPath))
+# fileOpen.close()
+# fileOpen.close()
+# print(Datalog.checkFileUsed(fullPath))
