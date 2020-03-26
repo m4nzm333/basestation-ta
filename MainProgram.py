@@ -14,6 +14,7 @@ from Datalog import Datalog
 from DataUtils import DataUtils
 from gpiozero import LED
 import sys
+from api.api import app
 
 # Main function for subscriber
 def subscribe():
@@ -58,28 +59,34 @@ def archiveLocalSensor():
         led.off()
         time.sleep(4.5)
 
-# TODO: Make publisher for Server
+# Start API HTTP Server
+def startApiServer():
+    app.run('0.0.0.0', 8000)
 
 # Main function for run all function at the same time (Multiprocessing)
 def main():
     try:
-    # Function
-    #p1 = Process(target=subscribe)
+        # Function
+        p1 = Process(target=subscribe)
         p2 = Process(target=archiveLocalSensor)
         p3 = Process(target=publishTempToServer)
-        #p1.start()
+        p4 = Process(target=startApiServer)
+        p1.start()
         p2.start()
         p3.start()
-        #p1.join()
+        p4.start()
+        p1.join()
         p2.join()
         p3.join()
     except KeyboardInterrupt:
-        # p1.terminate
-        p2.terminate
-        p3.terminate
-        # p1.kill
-        p2.kill
-        p3.kill
+        p1.terminate()
+        p2.terminate()
+        p3.terminate()
+        p4.terminate()
+        p1.kill()
+        p2.kill()
+        p3.kill()
+        p4.terminate()
 
 
 
