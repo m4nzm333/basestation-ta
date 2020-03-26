@@ -17,7 +17,7 @@ class RaspiPublisher:
     # Instance Attribute
     def __init__(self, mqttServer, mqttPort, clientName):
         logging.basicConfig(filename='./log/publisher.log', format='%(asctime)s %(message)s', level=logging.DEBUG)
-        keepAliveInterval = 30
+        keepAliveInterval = 60
 
         self.mqttClient = mqtt.Client(clientName)
 

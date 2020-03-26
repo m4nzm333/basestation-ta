@@ -23,14 +23,16 @@ def subscribe():
 def publishTempToServer():
     raspiPublisher = RaspiPublisher('192.168.1.7', 1883, "Raspi4-C4")
     while 1:
-        lastArray = Datalog.getArrayLastData()
-        # Loop foreach data in Array
-        for data in lastArray:
-            dicData = DataUtils.getDicToPublish(data)
-            raspiPublisher.publish(dicData['topic'], dicData['message'])
-            time.sleep(0.5)
-        Datalog.deleteLastData()
-        time.sleep(1)
+        raspiPublisher.mqttClient.loop_start()
+        while raspiPublisher.mqttClient.is_connected():
+            lastArray = Datalog.getArrayLastData()
+            # Loop foreach data in Array
+            for data in lastArray:
+                dicData = DataUtils.getDicToPublish(data)
+                raspiPublisher.publish(dicData['topic'], dicData['message'])
+                time.sleep(0.5)
+            Datalog.deleteLastData()
+            time.sleep(0.1)
 
 # Get Data from Local Sensor
 def archiveLocalSensor():
