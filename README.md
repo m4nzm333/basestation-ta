@@ -5,9 +5,7 @@ Ini adalah project skripsi tentang salah satu proses kerja Basestation yang dipa
 ## Kebutuhan
 
 1. Python 3.x
-2. Library Paho-MQTT
-3. Library rasp.BME280
-4. Library SMBus
+2. Daftar library di requirements.txt
 
 ## Instalasi
 
@@ -15,26 +13,11 @@ Ini adalah project skripsi tentang salah satu proses kerja Basestation yang dipa
 ```
 $ git clone https://gitlab.com/m4nzm333/basestation-ta
 ```
-2. Install library Paho-MQTT
+3. Install library yang dibutuhkan
 ```
-$ pip3 install Paho-MQTT
+$ pip3 install -r requirements.txt
 ```
-3. Install library BME280
-```
-$ pip3 install rasp.bme280
-```
-
-4. Install library BME280
-```
-$ pip3 install rasp.bme280
-```
-
-5. Install library SMBus
-```
-$ pip3 install smbus
-```
-
-6. Jalankan Main Program
+4. Jalankan Main Program
 ```
 $ python3 MainProgram.py
 ```
@@ -47,7 +30,7 @@ $ python3 MainProgram.py
 id=abc,temp=xx,long=xxx.xxx,lat=xxx.xxx,timestamp=yyyy-mm-dd HH:MM:ss.sss
 ```
 | Parameter | Kebutuhan|      Keterangan                                                                                         |
-|-----------|----------|--------------------------------------------------------------------------------------------------------:|
+|-----------|----------|:--------------------------------------------------------------------------------------------------------|
 | id        | required | id sensor yang mengirim (contoh: Basestation-A1)                                                        |
 | temp      | required | "temp" adalah nama variabel sensor, nama varibel boleh diganti kemudian diikuti nilai variabel tersebut |
 | long      | optional | longitude atau garis bujur                                                                              |
@@ -60,7 +43,7 @@ abc,xx,xxx.xxx,xxx.xxx,yyyy-mm-dd HH:MM:ss.sss
 ```
 Data disusun berdasarkan urutan:
 | Parameter | Kebutuhan|      Keterangan                                                                                         |
-|-----------|----------|--------------------------------------------------------------------------------------------------------:|
+|-----------|----------|:--------------------------------------------------------------------------------------------------------|
 | id        | required | id sensor yang mengirim (contoh: Basestation-A1)                                                        |
 | temp      | required | "temp" adalah nama variabel sensor, nama varibel boleh diganti kemudian diikuti nilai variabel tersebut |
 | long      | optional | longitude atau garis bujur                                                                              |
