@@ -29,7 +29,7 @@ def getFiles():
     # Check if file is allowed extension
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], 'aa.txt'))
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         return jsonify({'response':'success', 'message':'Upload success!'})
     else:
         return jsonify({'response':'error', 'message':'File extension denied!'})
