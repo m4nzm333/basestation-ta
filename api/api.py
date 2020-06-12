@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, url_for, jsonify
+from flask import Flask, request, redirect, url_for, jsonify, render_template
 from werkzeug.utils import secure_filename
 import os 
 
@@ -14,7 +14,7 @@ def allowed_file(filename):
 
 @app.route('/')
 def hello_world():
-    return 'If you see this, the API works fine!'
+    return render_template("welcome.html")
 
 
 @app.route('/api', methods=['POST'])
@@ -33,4 +33,5 @@ def getFiles():
         return jsonify({'response':'success', 'message':'Upload success!'})
     else:
         return jsonify({'response':'error', 'message':'File extension denied!'})
-        
+
+app.run('0.0.0.0', 8000, debug=True)
