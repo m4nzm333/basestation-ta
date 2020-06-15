@@ -34,4 +34,4 @@ def getFiles():
     else:
         return jsonify({'response':'error', 'message':'File extension denied!'})
 
-app.run('0.0.0.0', 8000, debug=True)
+app.run('0.0.0.0', 80, debug=True)
