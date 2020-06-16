@@ -3,6 +3,7 @@ from werkzeug.utils import secure_filename
 import os
 # For Random
 import random
+from gpiozero import CPUTemperature
 
 UPLOAD_FOLDER = './data/post'
 ALLOWED_EXTENSIONS = {'txt'}
@@ -38,7 +39,8 @@ def getFiles():
 
 @app.route('/getStatus', methods=['GET'])
 def getStatus():
-    # TODO : Get CPU Temp Value and Memory Load
-    return jsonify({'cpuTemp': random.randint(30,50), 'memoryLoad': random.randint(300,500)})
+    cpu = CPUTemperature()
+    # TODO : Get memory Load
+    return jsonify({'cpuTemp': cpu.temperature, 'memoryLoad': random.randint(300,500)})
 
 app.run('0.0.0.0', 80, debug=True)
