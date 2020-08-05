@@ -9,10 +9,11 @@ import random
 from datetime import datetime
 from Datalog import Datalog
 
+
 class DataUtils:
 
     # Convert from Data via Subscriber to String Raw
-    # abc,xx,xxx.xxx,xxx.xxx,yyyy-mm-dd HH:MM:ss.sss
+    # 2020-07-14 14:00:45.040310,32.99,1008.11,55.63,130.0058,02:5f
     # to
     # id=abc,temp=xx,long=xxx.xxx,lat=xxx.xxx,timestamp=yyyy-mm-dd HH:MM:ss.sss
     @staticmethod
@@ -23,8 +24,10 @@ class DataUtils:
             datetime.strptime(delimiter[2], "%Y-%m-%d %H:%M:%S.%f")
             return "id={},{}={},timestamp={}".format(delimiter[0], topic, delimiter[1], delimiter[2])
         except:
-            return "id={},{}={},long={},lat={},timestamo={}".format(delimiter[0], topic, delimiter[1], delimiter[2], delimiter[3], delimiter[4])
-    
+            now = datetime.now()
+            return "id={},{}={},long={},lat={},timestamp={},received={}".format(delimiter[5], topic, delimiter[1], delimiter[3], delimiter[4], delimiter[0], now.strftime(
+                "%Y-%m-%d %H:%M:%S.%f"))
+
     # Convert Raw String to Dictionary (JSON like Python)
     # id=abc,temp=xx,long=xxx.xxx,lat=xxx.xxx,timestamp=yyyy-mm-dd HH:MM:ss.sss
     @staticmethod
@@ -35,7 +38,7 @@ class DataUtils:
             keyValSplited = splited.split('=')
             dicData[keyValSplited[0]] = keyValSplited[1]
         return dicData
-    
+
     # Check if data is not negative or 0 (data  = dictionary)
     @staticmethod
     def checkDataValid(data):
@@ -54,16 +57,16 @@ class DataUtils:
                 return False
         # If Valid Return True
         return True
-    
-    #Check if data is not negativ or 0 using raw value(string, float)
+
+    # Check if data is not negativ or 0 using raw value(string, float)
     @staticmethod
     def checkDataValidRaw(name, value):
         # TODO : Fix the filter paramter
         # Check Temperature
-        switcher={
-                'temperature': False if value <= 0 else True,
-                'hummidity': False if value <= 0 else True,
-                'pressure': False if value <= 0 else True
+        switcher = {
+            'temperature': False if value <= 0 else True,
+            'hummidity': False if value <= 0 else True,
+            'pressure': False if value <= 0 else True
         }
         return switcher.get(name, True)
 
@@ -78,15 +81,22 @@ class DataUtils:
         for key, value in dicData.items():
             keyDic.append(key)
             message.append(value)
-        return {'topic':keyDic[1], 'message':','.join(message)}
+        return {'topic': keyDic[1], 'message': ','.join(message)}
+
 
 # Debug
-# now = datetime.now()
-# dataDummy = "abc,{},-5.209925,119.473513,{}".format(str(random.uniform(28.0, 33.5))[:5], now.strftime("%Y-%m-%d %H:%M:%S.%f"))
+now = datetime.now()
+# 2020-07-14 14:00:45.040310,32.99,1008.11,55.63,130.0058,02:5f
+# dataDummy = "abc,{},-5.209925,119.473513,{}".format(
+#     str(random.uniform(28.0, 33.5))[:5], now.strftime("%Y-%m-%d %H:%M:%S.%f"))
+dataDummy = "{},{},1008.11,55.63,130.0058,02:5f".format(now.strftime(
+    "%Y-%m-%d %H:%M:%S.%f"), str(random.uniform(28.0, 33.5))[:5])
+print(dataDummy)
+
 # dataDummy2 = "abc,{},{}".format(str(random.uniform(28.0, 33.5))[:5], now.strftime("%Y-%m-%d %H:%M:%S.%f"))
 
-# print("Debugging : DataUtils.subscriberPayloadToString")
-# print(DataUtils.subscriberPayloadToString("temp", dataDummy2))
+print("Debugging : DataUtils.subscriberPayloadToString")
+print(DataUtils.subscriberPayloadToString("temp", dataDummy))
 
 # print("Debugging : DataUtils.stringToDictionary")
 # print(DataUtils.che(DataUtils.subscriberPayloadToString("temp", dataDummy2)))
