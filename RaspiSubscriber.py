@@ -12,13 +12,16 @@ from DataUtils import DataUtils
 from Datalog import Datalog
 
 # Class for Raspberry Subscriber
+
+
 class RaspiSubscriber:
 
     # Instance Attribute
     def __init__(self, mqttServer, mqttPort, clientName):
-        logging.basicConfig(filename='./log/subscriber.log', format='%(asctime)s %(message)s', level=logging.DEBUG)
+        logging.basicConfig(filename='./log/subscriber.log',
+                            format='%(asctime)s %(message)s', level=logging.DEBUG)
         keepAliveInterval = 30
-        mqttTopic = [("temperature", 0),("pressure", 0),("hummidity", 0)]
+        mqttTopic = [("temperature", 0), ("pressure", 0), ("hummidity", 0), ("temperature", 0)]
 
         mqttClient = mqtt.Client(clientName)
 
@@ -28,40 +31,45 @@ class RaspiSubscriber:
         mqttClient.on_connect = self.on_connect
 
         # Connect
-        logging.info("Connecting to MQTT Broker({:s}:{:s}).".format(mqttServer, str(mqttPort)))
-        print("Connecting to MQTT Broker({:s}:{:s}).".format(mqttServer, str(mqttPort)))
+        logging.info("Connecting to MQTT Broker({:s}:{:s}).".format(
+            mqttServer, str(mqttPort)))
+        print("Connecting to MQTT Broker({:s}:{:s}).".format(
+            mqttServer, str(mqttPort)))
         try:
             mqttClient.connect(mqttServer, mqttPort, keepAliveInterval)
         except:
-            logging.exception("MQTT Broker({:s}:{:s}) connection failed caused by timeout.".format(mqttServer, str(mqttPort)))
+            logging.exception("MQTT Broker({:s}:{:s}) connection failed caused by timeout.".format(
+                mqttServer, str(mqttPort)))
         mqttClient.subscribe(mqttTopic)
 
-        #Continue the network loop
+        # Continue the network loop
         mqttClient.loop_forever()
-    
+
     # Read Data Function
     def on_message(self, mosq, obj, msg):
-        print("Subscriber= Topic={} ; Message ={}".format(msg.topic, msg.payload.decode('utf-8')))
-        rawMsg = DataUtils.subscriberPayloadToString(msg.topic, msg.payload.decode('utf-8'))
+        print("Subscriber= Topic={} ; Message ={}".format(
+            msg.topic, msg.payload.decode('utf-8')))
+        rawMsg = DataUtils.subscriberPayloadToString(
+            msg.topic, msg.payload.decode('utf-8'))
         dicMsg = DataUtils.stringToDictionary(rawMsg)
         if DataUtils.checkDataValid(dicMsg):
             Datalog.writeStringToFile(rawMsg)
 
     # Show error if connection unsuccessful
     def on_connect(self, client, userdata, flag, rc):
-        if rc==0:
+        if rc == 0:
             logging.info("Connection successful. Waiting for data.")
             print("Connection successful. Waiting for data.")
-        if rc==1:
+        if rc == 1:
             logging.error("Connection refused - incorrect protocol version.")
             print("Connection refused - incorrect protocol version")
-        if rc==2:
+        if rc == 2:
             logging.error("Connection refused - invalid client identifier.")
             print("Connection refused - invalid client identifier.")
-        if rc==3:
+        if rc == 3:
             logging.error("Connection refused - server unavailable.")
             print("Connection refused - server unavailable.")
-        if rc==4:
+        if rc == 4:
             logging.error("Connection refused - not authorised.")
             print("Connection refused - not authorised.")
 

@@ -18,11 +18,11 @@ from api.api import app
 
 # Main function for subscriber
 def subscribe():
-    raspiSubscriber = RaspiSubscriber('127.0.0.1', 1883, "localSubsciber")
+    raspiSubscriber = RaspiSubscriber('192.168.137.1', 1883, "localSubsciber")
 
 # Main function for publisher
 def publishTempToServer():
-    raspiPublisher = RaspiPublisher('192.168.1.7', 1883, "Raspi4-C4")
+    raspiPublisher = RaspiPublisher('192.168.137.1', 1883, "bs-cd14")
     while 1:
         raspiPublisher.mqttClient.loop_start()
         while raspiPublisher.mqttClient.is_connected():
@@ -37,6 +37,7 @@ def publishTempToServer():
 
 # Get Data from Local Sensor
 def archiveLocalSensor():
+    # TODO: ganti data row untuk masing-masing sensor
     led = LED(4)
     sensorBME280 = SensorBME280()
     while True:
@@ -68,27 +69,26 @@ def main():
     try:
         # Function
         p1 = Process(target=subscribe)
-        p2 = Process(target=archiveLocalSensor)
-        p3 = Process(target=publishTempToServer)
-        p4 = Process(target=startApiServer)
         p1.start()
-        p2.start()
-        p3.start()
-        p4.start()
         p1.join()
-        p2.join()
-        p3.join()
+        # p2 = Process(target=archiveLocalSensor)
+        # p2.start()
+        # p2.join()
+        # p3 = Process(target=publishTempToServer)
+        # p3.start()
+        # p3.join()
+        # p4 = Process(target=startApiServer)
+        # p4.start()
+        # p4.join()
     except KeyboardInterrupt:
         p1.terminate()
-        p2.terminate()
-        p3.terminate()
-        p4.terminate()
         p1.kill()
-        p2.kill()
-        p3.kill()
-        p4.terminate()
-
-
+        # p2.terminate()
+        # p2.kill()
+        # p3.terminate()
+        # p3.kill()
+        # p4.terminate()
+        # p3.kill()
 
 # ----------------
 #       MAIN

@@ -42,18 +42,24 @@ class DataUtils:
     # Check if data is not negative or 0 (data  = dictionary)
     @staticmethod
     def checkDataValid(data):
-        # TODO : Fix the filter paramter
-        # Check Temperature
+        # TODO : Fix the filter parameter
         if 'temperature' in data:
             if float(data['temperature']) <= 0:
                 return False
-        # Check Hummidity
         if 'hummidity' in data:
             if float(data['hummidity']) <= 0:
                 return False
-        # Check Pressure
         if 'pressure' in data:
             if float(data['pressure']) <= 0:
+                return False
+        if 'co2' in data:
+            if float(data['co2']) <= 0:
+                return False
+        if 'co' in data:
+            if float(data['co']) <= 0:
+                return False
+        if 'pm10' in data:
+            if float(data['pm10']) < 0:
                 return False
         # If Valid Return True
         return True
@@ -66,7 +72,10 @@ class DataUtils:
         switcher = {
             'temperature': False if value <= 0 else True,
             'hummidity': False if value <= 0 else True,
-            'pressure': False if value <= 0 else True
+            'pressure': False if value <= 0 else True,
+            'co2': False if value <= 0 else True,
+            'co': False if value <= 0 else True,
+            'pm10': False if value < 0 else True # Bisa bernilai 0
         }
         return switcher.get(name, True)
 
@@ -85,18 +94,18 @@ class DataUtils:
 
 
 # Debug
-now = datetime.now()
+# now = datetime.now()
 # 2020-07-14 14:00:45.040310,32.99,1008.11,55.63,130.0058,02:5f
 # dataDummy = "abc,{},-5.209925,119.473513,{}".format(
 #     str(random.uniform(28.0, 33.5))[:5], now.strftime("%Y-%m-%d %H:%M:%S.%f"))
-dataDummy = "{},{},1008.11,55.63,130.0058,02:5f".format(now.strftime(
-    "%Y-%m-%d %H:%M:%S.%f"), str(random.uniform(28.0, 33.5))[:5])
-print(dataDummy)
+# dataDummy = "{},{},1008.11,55.63,130.0058,02:5f".format(now.strftime(
+#     "%Y-%m-%d %H:%M:%S.%f"), str(random.uniform(28.0, 33.5))[:5])
+# print(dataDummy)
 
 # dataDummy2 = "abc,{},{}".format(str(random.uniform(28.0, 33.5))[:5], now.strftime("%Y-%m-%d %H:%M:%S.%f"))
 
-print("Debugging : DataUtils.subscriberPayloadToString")
-print(DataUtils.subscriberPayloadToString("temp", dataDummy))
+# print("Debugging : DataUtils.subscriberPayloadToString")
+# print(DataUtils.subscriberPayloadToString("temp", dataDummy))
 
 # print("Debugging : DataUtils.stringToDictionary")
 # print(DataUtils.che(DataUtils.subscriberPayloadToString("temp", dataDummy2)))
