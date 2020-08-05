@@ -8,7 +8,7 @@ from RaspiSubscriber import RaspiSubscriber
 from RaspiPublisher import RaspiPublisher
 import time
 from multiprocessing import Process
-from SensorBME280 import SensorBME280
+# from SensorBME280 import SensorBME280
 from datetime import datetime
 from Datalog import Datalog
 from DataUtils import DataUtils
@@ -36,29 +36,29 @@ def publishTempToServer():
             time.sleep(0.1)
 
 # Get Data from Local Sensor
-def archiveLocalSensor():
-    # TODO: ganti data row untuk masing-masing sensor
-    led = LED(4)
-    sensorBME280 = SensorBME280()
-    while True:
-        led.on()
-        now = datetime.now()
-        valTemperature = sensorBME280.getTemperature()
-        valHummitidy = sensorBME280.getHummidity()
-        valPressure = sensorBME280.getPressure()
-        # Check Data Valid
-        if DataUtils.checkDataValidRaw('temperature', valTemperature):          
-            dataTemperature = "id=Raspi4-CD14,temperature={:.2f},timestamp={}".format(valTemperature, now.strftime("%Y-%m-%d %H:%M:%S.%f"))
-            Datalog.writeStringToFile(dataTemperature)
-        if DataUtils.checkDataValidRaw('hummidity', valHummitidy):
-            dataHummidity = "id=Raspi4-CD14,hummidity={:.2f},timestamp={}".format(valHummitidy, now.strftime("%Y-%m-%d %H:%M:%S.%f"))
-            Datalog.writeStringToFile(dataHummidity)
-        if DataUtils.checkDataValidRaw('pressure', valPressure):
-            dataPressure = "id=Raspi4-CD14,pressure={:.2f},timestamp={}".format(valPressure, now.strftime("%Y-%m-%d %H:%M:%S.%f"))
-            Datalog.writeStringToFile(dataPressure)
-        time.sleep(0.5)
-        led.off()
-        time.sleep(4.5)
+# def archiveLocalSensor():
+#     # TODO: ganti data row untuk masing-masing sensor
+#     led = LED(4)
+#     sensorBME280 = SensorBME280()
+#     while True:
+#         led.on()
+#         now = datetime.now()
+#         valTemperature = sensorBME280.getTemperature()
+#         valHummitidy = sensorBME280.getHummidity()
+#         valPressure = sensorBME280.getPressure()
+#         # Check Data Valid
+#         if DataUtils.checkDataValidRaw('temperature', valTemperature):          
+#             dataTemperature = "id=Raspi4-CD14,temperature={:.2f},timestamp={}".format(valTemperature, now.strftime("%Y-%m-%d %H:%M:%S.%f"))
+#             Datalog.writeStringToFile(dataTemperature)
+#         if DataUtils.checkDataValidRaw('hummidity', valHummitidy):
+#             dataHummidity = "id=Raspi4-CD14,hummidity={:.2f},timestamp={}".format(valHummitidy, now.strftime("%Y-%m-%d %H:%M:%S.%f"))
+#             Datalog.writeStringToFile(dataHummidity)
+#         if DataUtils.checkDataValidRaw('pressure', valPressure):
+#             dataPressure = "id=Raspi4-CD14,pressure={:.2f},timestamp={}".format(valPressure, now.strftime("%Y-%m-%d %H:%M:%S.%f"))
+#             Datalog.writeStringToFile(dataPressure)
+#         time.sleep(0.5)
+#         led.off()
+#         time.sleep(4.5)
 
 # Start API HTTP Server
 def startApiServer():
