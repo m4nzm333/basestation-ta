@@ -18,10 +18,11 @@ class RaspiSubscriber:
 
     # Instance Attribute
     def __init__(self, mqttServer, mqttPort, clientName):
-        logging.basicConfig(filename='./log/subscriber.log',
-                            format='%(asctime)s %(message)s', level=logging.DEBUG)
+        # logging.basicConfig(filename='./log/subscriber.log',
+        #                     format='%(asctime)s %(message)s', level=logging.DEBUG)
         keepAliveInterval = 30
-        mqttTopic = [("temperature", 0), ("pressure", 0), ("hummidity", 0), ("temperature", 0)]
+        mqttTopic = [("temperature", 0), ("pressure", 0),
+                     ("hummidity", 0), ("co", 0), ("co2", 0), ("pm10", 0)]
 
         mqttClient = mqtt.Client(clientName)
 
@@ -47,13 +48,16 @@ class RaspiSubscriber:
 
     # Read Data Function
     def on_message(self, mosq, obj, msg):
-        print("Subscriber= Topic={} ; Message ={}".format(
-            msg.topic, msg.payload.decode('utf-8')))
-        rawMsg = DataUtils.subscriberPayloadToString(
-            msg.topic, msg.payload.decode('utf-8'))
-        dicMsg = DataUtils.stringToDictionary(rawMsg)
-        if DataUtils.checkDataValid(dicMsg):
-            Datalog.writeStringToFile(rawMsg)
+        # Print on console
+        print('')
+        print(msg.topic)
+        print(msg.payload.decode('utf-8'))
+
+        # rawMsg = DataUtils.subscriberPayloadToString(
+        #     msg.topic, msg.payload.decode('utf-8'))
+        # dicMsg = DataUtils.stringToDictionary(rawMsg)
+        # print(DataUtils.checkDataValid(dicMsg))
+        Datalog.writeStringToFile(msg.payload.decode('utf-8'))
 
     # Show error if connection unsuccessful
     def on_connect(self, client, userdata, flag, rc):

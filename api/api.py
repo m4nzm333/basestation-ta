@@ -42,5 +42,3 @@ def getStatus():
     cpu = CPUTemperature()
     # TODO : Get memory Load
     return jsonify({'cpuTemp': cpu.temperature, 'memoryLoad': random.randint(300,500)})
-
-app.run('0.0.0.0', 80, debug=True)

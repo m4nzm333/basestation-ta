@@ -14,11 +14,11 @@ from Datalog import Datalog
 from DataUtils import DataUtils
 from gpiozero import LED
 import sys
-from api.api import app
+# from api.api import app
 
 # Main function for subscriber
 def subscribe():
-    raspiSubscriber = RaspiSubscriber('192.168.137.1', 1883, "localSubsciber")
+    RaspiSubscriber('192.168.137.1', 1883, "bs-cd14")
 
 # Main function for publisher
 def publishTempToServer():
@@ -61,8 +61,8 @@ def publishTempToServer():
 #         time.sleep(4.5)
 
 # Start API HTTP Server
-def startApiServer():
-    app.run('0.0.0.0', 8000)
+# def startApiServer():
+#     app.run('0.0.0.0', 8000)
 
 # Main function for run all function at the same time (Multiprocessing)
 def main():
