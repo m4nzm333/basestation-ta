@@ -137,8 +137,8 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
-
 # This Project Ignore
 log/*
 .vscode/*
 api/__pycache__/*
+temp/*
