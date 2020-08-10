@@ -9,46 +9,54 @@ from datetime import datetime
 import psutil
 import time
 
+
 class Datalog:
 
     # Make directory for data now
     @staticmethod
     def createDirDate(datetime):
         try:
-            os.makedirs("./data/subscriber/{}/{}/{}/{}/{}".format(datetime.year, datetime.month, datetime.day, datetime.hour, datetime.minute))
-        except OSError as e:
+            os.makedirs("./temp/subscriber/{}/{}/{}/{}/{}".format(datetime.year,
+                                                                  datetime.month, datetime.day, datetime.hour, datetime.minute))
+        except:
             pass
-    
+
     # Output the data (string) into file
     @staticmethod
     def writeStringToFile(data):
         now = datetime.now()
-        dirLoc = "./data/subscriber/{}/{}/{}/{}/{}".format(now.year, now.month, now.day, now.hour, now.minute)
+        dirLoc = "./temp/subscriber/{}/{}/{}/{}/{}".format(
+            now.year, now.month, now.day, now.hour, now.minute)
         Datalog.createDirDate(now)
-        file = open("{}/{}.txt".format(dirLoc, now.strftime("%Y-%m-%d %H:%M:%S")), "a")
+        file = open("{}/{}.csv".format(dirLoc,
+                                       now.strftime("%Y-%m-%d %H:%M:%S")), "a")
         file.write(data+'\n')
         file.close()
-    
+
     # Get oldest file directory location
     @staticmethod
     def getDirLastData():
         try:
-            files = os.listdir('./data/subscriber')
-            year = os.listdir('./data/subscriber/{}'.format(files[0]))
+            files = os.listdir('./temp/subscriber')
+            year = os.listdir('./temp/subscriber/{}'.format(files[0]))
             year.sort()
-            month = os.listdir('./data/subscriber/{}/{}'.format(files[0], year[0]))
+            month = os.listdir(
+                './temp/subscriber/{}/{}'.format(files[0], year[0]))
             month.sort()
-            day = os.listdir('./data/subscriber/{}/{}/{}'.format(files[0], year[0], month[0]))
+            day = os.listdir(
+                './temp/subscriber/{}/{}/{}'.format(files[0], year[0], month[0]))
             day.sort()
-            hour = os.listdir('./data/subscriber/{}/{}/{}/{}'.format(files[0], year[0], month[0], day[0]))
+            hour = os.listdir(
+                './temp/subscriber/{}/{}/{}/{}'.format(files[0], year[0], month[0], day[0]))
             hour.sort()
-            minute = os.listdir('./data/subscriber/{}/{}/{}/{}/{}'.format(files[0], year[0], month[0], day[0], hour[0]))
+            minute = os.listdir(
+                './temp/subscriber/{}/{}/{}/{}/{}'.format(files[0], year[0], month[0], day[0], hour[0]))
             minute.sort()
 
-            return './data/subscriber/{}/{}/{}/{}/{}/{}'.format(files[0], year[0], month[0], day[0], hour[0], minute[0])
+            return './temp/subscriber/{}/{}/{}/{}/{}/{}'.format(files[0], year[0], month[0], day[0], hour[0], minute[0])
         except:
             return 'False'
-    
+
     # Get array the oldest file content
     @staticmethod
     def getArrayLastData():
@@ -67,40 +75,50 @@ class Datalog:
     def deleteLastData():
         try:
             os.unlink(Datalog.getDirLastData())
-            files = os.listdir('./data/subscriber')
-            year = os.listdir('./data/subscriber/{}'.format(files[0]))
+            files = os.listdir('./temp/subscriber')
+            year = os.listdir('./temp/subscriber/{}'.format(files[0]))
             year.sort()
-            month = os.listdir('./data/subscriber/{}/{}'.format(files[0], year[0]))
+            month = os.listdir(
+                './temp/subscriber/{}/{}'.format(files[0], year[0]))
             month.sort()
-            day = os.listdir('./data/subscriber/{}/{}/{}'.format(files[0], year[0], month[0]))
+            day = os.listdir(
+                './temp/subscriber/{}/{}/{}'.format(files[0], year[0], month[0]))
             day.sort()
-            hour = os.listdir('./data/subscriber/{}/{}/{}/{}'.format(files[0], year[0], month[0], day[0]))
+            hour = os.listdir(
+                './temp/subscriber/{}/{}/{}/{}'.format(files[0], year[0], month[0], day[0]))
             hour.sort()
-            minute = os.listdir('./data/subscriber/{}/{}/{}/{}/{}'.format(files[0], year[0], month[0], day[0], hour[0]))
+            minute = os.listdir(
+                './temp/subscriber/{}/{}/{}/{}/{}'.format(files[0], year[0], month[0], day[0], hour[0]))
             minute.sort()
 
             # Delete directory if Empty and Re-listing directory file
             if len(minute) == 0:
-                os.rmdir('./data/subscriber/{}/{}/{}/{}/{}'.format(files[0], year[0], month[0], day[0], hour[0]))
-                hour = os.listdir('./data/subscriber/{}/{}/{}/{}'.format(files[0], year[0], month[0], day[0]))
+                os.rmdir(
+                    './temp/subscriber/{}/{}/{}/{}/{}'.format(files[0], year[0], month[0], day[0], hour[0]))
+                hour = os.listdir(
+                    './temp/subscriber/{}/{}/{}/{}'.format(files[0], year[0], month[0], day[0]))
                 hour.sort()
             if len(hour) == 0:
-                os.rmdir('./data/subscriber/{}/{}/{}/{}'.format(files[0], year[0], month[0], day[0]))
-                day = os.listdir('./data/subscriber/{}/{}/{}'.format(files[0], year[0], month[0]))
+                os.rmdir(
+                    './temp/subscriber/{}/{}/{}/{}'.format(files[0], year[0], month[0], day[0]))
+                day = os.listdir(
+                    './temp/subscriber/{}/{}/{}'.format(files[0], year[0], month[0]))
                 day.sort()
             if len(day) == 0:
-                os.rmdir('./data/subscriber/{}/{}/{}'.format(files[0], year[0], month[0]))
-                month = os.listdir('./data/subscriber/{}/{}'.format(files[0], year[0]))
+                os.rmdir(
+                    './temp/subscriber/{}/{}/{}'.format(files[0], year[0], month[0]))
+                month = os.listdir(
+                    './temp/subscriber/{}/{}'.format(files[0], year[0]))
                 month.sort()
             if len(month) == 0:
-                os.rmdir('./data/subscriber/{}/{}'.format(files[0], year[0]))
-                year = os.listdir('./data/subscriber/{}'.format(files[0]))
+                os.rmdir('./temp/subscriber/{}/{}'.format(files[0], year[0]))
+                year = os.listdir('./temp/subscriber/{}'.format(files[0]))
                 year.sort()
             if len(month) == 0:
-                os.rmdir('./data/subscriber/{}'.format(files[0]))
+                os.rmdir('./temp/subscriber/{}'.format(files[0]))
         except:
             pass
-    
+
     # Check if current file not in use
     @staticmethod
     def checkFileUsed(fpath):

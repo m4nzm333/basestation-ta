@@ -18,7 +18,7 @@ import sys
 
 # Main function for subscriber
 def subscribe():
-    RaspiSubscriber('192.168.137.1', 1883, "bs-cd14")
+    RaspiSubscriber('127.0.0.1', 1883, "bs-cd14")
 
 # Main function for publisher
 def publishTempToServer():

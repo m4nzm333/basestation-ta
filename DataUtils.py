@@ -19,14 +19,18 @@ class DataUtils:
     @staticmethod
     def subscriberPayloadToString(topic, data):
         delimiter = data.split(',')
-        # Check if 3rd data is timestamp
-        try:
-            datetime.strptime(delimiter[2], "%Y-%m-%d %H:%M:%S.%f")
+        # Type A: Dengan data kirim di kolom 2
+        if delimiter[1] == '':
             return "id={},{}={},timestamp={}".format(delimiter[0], topic, delimiter[1], delimiter[2])
-        except:
-            now = datetime.now()
-            return "id={},{}={},long={},lat={},timestamp={},received={}".format(delimiter[5], topic, delimiter[1], delimiter[3], delimiter[4], delimiter[0], now.strftime(
-                "%Y-%m-%d %H:%M:%S.%f"))
+        return data
+        # try:
+        #     #
+        #     datetime.strptime(delimiter[2], "%Y-%m-%d %H:%M:%S.%f")
+        #     return "id={},{}={},timestamp={}".format(delimiter[0], topic, delimiter[1], delimiter[2])
+        # except:
+        #     now = datetime.now()
+        #     return "id={},{}={},long={},lat={},timestamp={},received={}".format(delimiter[5], topic, delimiter[1], delimiter[3], delimiter[4], delimiter[0], now.strftime(
+        #         "%Y-%m-%d %H:%M:%S.%f"))
 
     # Convert Raw String to Dictionary (JSON like Python)
     # id=abc,temp=xx,long=xxx.xxx,lat=xxx.xxx,timestamp=yyyy-mm-dd HH:MM:ss.sss
@@ -75,7 +79,7 @@ class DataUtils:
             'pressure': False if value <= 0 else True,
             'co2': False if value <= 0 else True,
             'co': False if value <= 0 else True,
-            'pm10': False if value < 0 else True # Bisa bernilai 0
+            'pm10': False if value < 0 else True  # Bisa bernilai 0
         }
         return switcher.get(name, True)
 

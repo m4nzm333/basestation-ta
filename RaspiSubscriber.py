@@ -42,14 +42,13 @@ class RaspiSubscriber:
             logging.exception("MQTT Broker({:s}:{:s}) connection failed caused by timeout.".format(
                 mqttServer, str(mqttPort)))
         mqttClient.subscribe(mqttTopic)
-
         # Continue the network loop
         mqttClient.loop_forever()
 
     # Read Data Function
     def on_message(self, mosq, obj, msg):
         # Print on console
-        print('')
+        print('---------------------------')
         print(msg.topic)
         print(msg.payload.decode('utf-8'))
 
