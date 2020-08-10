@@ -13,28 +13,24 @@ from Datalog import Datalog
 class DataUtils:
 
     # Convert from Data via Subscriber to String Raw
-    # 2020-07-14 14:00:45.040310,32.99,1008.11,55.63,130.0058,02:5f
-    # to
-    # id=abc,temp=xx,long=xxx.xxx,lat=xxx.xxx,timestamp=yyyy-mm-dd HH:MM:ss.sss
+    # from e.g. 2020-07-14 14:08:43.391928,2020-7-14 14:09:45.394828,34.334232,-5.1381,119.4820,015e topic temperature
+    # Format => id,topic,value,lat,long,datetime_sensor,datetime_send, datetime_received
     @staticmethod
-    def subscriberPayloadToString(topic, data):
+    def subscriberPayloadToStringTemp(topic, data):
         delimiter = data.split(',')
-        # Type A: Dengan data kirim di kolom 2
-        if delimiter[1] == '':
-            return "id={},{}={},timestamp={}".format(delimiter[0], topic, delimiter[1], delimiter[2])
-        return data
-        # try:
-        #     #
-        #     datetime.strptime(delimiter[2], "%Y-%m-%d %H:%M:%S.%f")
-        #     return "id={},{}={},timestamp={}".format(delimiter[0], topic, delimiter[1], delimiter[2])
-        # except:
-        #     now = datetime.now()
-        #     return "id={},{}={},long={},lat={},timestamp={},received={}".format(delimiter[5], topic, delimiter[1], delimiter[3], delimiter[4], delimiter[0], now.strftime(
-        #         "%Y-%m-%d %H:%M:%S.%f"))
+        return '{},{},{},{},{},{},{}'.format(delimiter[5], topic, delimiter[2], delimiter[3], delimiter[4], delimiter[0], delimiter[1])
+    # With time received
+
+    @staticmethod
+    def subscriberPayloadToStringLog(topic, data):
+        now = datetime.now()
+        delimiter = data.split(',')
+        return '{},{},{},{},{},{},{},{}'.format(delimiter[5], topic, delimiter[2], delimiter[3], delimiter[4], delimiter[0], delimiter[1], now.strftime(
+            "%Y-%m-%d %H:%M:%S.%f"))
 
     # Convert Raw String to Dictionary (JSON like Python)
     # id=abc,temp=xx,long=xxx.xxx,lat=xxx.xxx,timestamp=yyyy-mm-dd HH:MM:ss.sss
-    @staticmethod
+    @ staticmethod
     def stringToDictionary(data):
         dicData = {}
         keyVal = data.split(',')
@@ -44,7 +40,7 @@ class DataUtils:
         return dicData
 
     # Check if data is not negative or 0 (data  = dictionary)
-    @staticmethod
+    @ staticmethod
     def checkDataValid(data):
         # TODO : Fix the filter parameter
         if 'temperature' in data:
@@ -69,7 +65,7 @@ class DataUtils:
         return True
 
     # Check if data is not negativ or 0 using raw value(string, float)
-    @staticmethod
+    @ staticmethod
     def checkDataValidRaw(name, value):
         # TODO : Fix the filter paramter
         # Check Temperature
@@ -85,7 +81,7 @@ class DataUtils:
 
     # Method for prepare data subscribe => Dictionary
     # {topic=xxx, message=xxx}
-    @staticmethod
+    @ staticmethod
     def getDicToPublish(stringRaw):
         dicData = DataUtils.stringToDictionary(stringRaw)
         message = ''

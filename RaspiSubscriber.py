@@ -10,6 +10,7 @@ import logging
 
 from DataUtils import DataUtils
 from Datalog import Datalog
+from DataTemp import DataTemp
 
 # Class for Raspberry Subscriber
 
@@ -51,12 +52,10 @@ class RaspiSubscriber:
         print('---------------------------')
         print(msg.topic)
         print(msg.payload.decode('utf-8'))
-
-        # rawMsg = DataUtils.subscriberPayloadToString(
-        #     msg.topic, msg.payload.decode('utf-8'))
-        # dicMsg = DataUtils.stringToDictionary(rawMsg)
-        # print(DataUtils.checkDataValid(dicMsg))
-        Datalog.writeStringToFile(msg.payload.decode('utf-8'))
+        # Save to log and temp file
+        sensorMsg = msg.payload.decode('utf-8')
+        DataTemp.writeStringToFile(sensorMsg)
+        Datalog.writeStringToFile(DataUtils.subscriberPayloadToStringLog(msg.topic, sensorMsg), sensorMsg.split(',')[0])
 
     # Show error if connection unsuccessful
     def on_connect(self, client, userdata, flag, rc):
