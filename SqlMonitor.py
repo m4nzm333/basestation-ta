@@ -29,9 +29,9 @@ class SqlMonitor:
         conn = sqlite3.connect('./db/{}-{}.db'.format(sensorDate.year, sensorDate.month))
         c = conn.cursor()
         # Create table
-        c.execute("CREATE TABLE IF NOT EXISTS '%s' (sensorTime text NULL, sensorSendTime TEXT NULL, receivedTime text NULL, sendTime text NULL, id, value, lat NULL, long NULL)" % topic)
-        item = (delimiter[0], delimiter[1], nowString, None, delimiter[5], delimiter[2], delimiter[3], delimiter[4])
-        c.execute("INSERT INTO '%s' values (?, ?, ?, ?, ?, ?, ?, ?)" % topic, item)
+        c.execute("CREATE TABLE IF NOT EXISTS '%s' (sensorTime text NULL, sensorSendTime TEXT NULL, receivedTime text NULL, sendTime text NULL, confirmationTime, id, value, lat NULL, long NULL)" % topic)
+        item = (delimiter[0], delimiter[1], nowString, None, None, delimiter[5], delimiter[2], delimiter[3], delimiter[4])
+        c.execute("INSERT INTO '%s' values (?, ?, ?, ?, ?, ?, ?, ?, ?)" % topic, item)
         conn.commit()
         conn.close()
 
