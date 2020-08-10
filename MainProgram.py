@@ -30,11 +30,16 @@ def publishTempToServer():
             lastArray = DataTemp.getArrayLastData()
             # Loop foreach data in Array
             for data in lastArray:
-                dicData = DataUtils.getDicToPublish(data)
-                raspiPublisher.publish(dicData['topic'], dicData['message'])
+                # TODO: Send to Server Broker
+                print(data)
+                # dicData = DataUtils.getDicToPublish(data)
+                # raspiPublisher.publish(dicData['topic'], dicData['message'])
+
                 time.sleep(0.5)
             DataTemp.deleteLastData()
             time.sleep(0.1)
+
+# TODO: Waiting for Confirmation from Server Broker
 
 # Get Data from Local Sensor
 # def archiveLocalSensor():
@@ -70,14 +75,14 @@ def main():
     try:
         # Function
         p1 = Process(target=subscribe)
+        p3 = Process(target=publishTempToServer)
         p1.start()
+        p3.start()
         p1.join()
+        p3.join()
         # p2 = Process(target=archiveLocalSensor)
         # p2.start()
         # p2.join()
-        # p3 = Process(target=publishTempToServer)
-        # p3.start()
-        # p3.join()
         # p4 = Process(target=startApiServer)
         # p4.start()
         # p4.join()
@@ -86,8 +91,8 @@ def main():
         p1.kill()
         # p2.terminate()
         # p2.kill()
-        # p3.terminate()
-        # p3.kill()
+        p3.terminate()
+        p3.kill()
         # p4.terminate()
         # p3.kill()
 

@@ -77,19 +77,6 @@ class DataUtils:
         }
         return switcher.get(name, True)
 
-    # Method for prepare data subscribe => Dictionary
-    # {topic=xxx, message=xxx}
-    @ staticmethod
-    def getDicToPublish(stringRaw):
-        dicData = DataUtils.stringToDictionary(stringRaw)
-        message = ''
-        keyDic = []
-        message = []
-        for key, value in dicData.items():
-            keyDic.append(key)
-            message.append(value)
-        return {'topic': keyDic[1], 'message': ','.join(message)}
-
 
 # Debug
 # now = datetime.now()

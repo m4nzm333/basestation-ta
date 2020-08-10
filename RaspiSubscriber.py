@@ -50,13 +50,13 @@ class RaspiSubscriber:
     # Read Data Function
     def on_message(self, mosq, obj, msg):
         # Print on console
-        print('---------------------------')
-        print(msg.topic)
-        print(msg.payload.decode('utf-8'))
+        # print('---------------------------')
+        # print(msg.topic)
+        # print(msg.payload.decode('utf-8'))
         # Save to log and temp file
         nowString = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
         sensorMsg = msg.payload.decode('utf-8')
-        DataTemp.writeStringToFile(sensorMsg)
+        DataTemp.writeStringToFile(DataUtils.subscriberPayloadToStringTemp(msg.topic, sensorMsg))
         Datalog.writeStringToFile(DataUtils.subscriberPayloadToStringLog(
             msg.topic, sensorMsg, nowString), sensorMsg.split(',')[0])
         SqlMonitor.sqlWrite(msg.topic, sensorMsg, nowString)
