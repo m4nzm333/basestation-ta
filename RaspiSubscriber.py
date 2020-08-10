@@ -5,12 +5,13 @@
 # e-mail    : irman.mashuri@gmail.com
 
 import paho.mqtt.client as mqtt
-import datetime as datetime
+from datetime import datetime
 import logging
 
 from DataUtils import DataUtils
 from Datalog import Datalog
 from DataTemp import DataTemp
+from SqlMonitor import SqlMonitor
 
 # Class for Raspberry Subscriber
 
@@ -53,9 +54,12 @@ class RaspiSubscriber:
         print(msg.topic)
         print(msg.payload.decode('utf-8'))
         # Save to log and temp file
+        nowString = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
         sensorMsg = msg.payload.decode('utf-8')
         DataTemp.writeStringToFile(sensorMsg)
-        Datalog.writeStringToFile(DataUtils.subscriberPayloadToStringLog(msg.topic, sensorMsg), sensorMsg.split(',')[0])
+        Datalog.writeStringToFile(DataUtils.subscriberPayloadToStringLog(
+            msg.topic, sensorMsg, nowString), sensorMsg.split(',')[0])
+        SqlMonitor.sqlWrite(msg.topic, sensorMsg, nowString)
 
     # Show error if connection unsuccessful
     def on_connect(self, client, userdata, flag, rc):

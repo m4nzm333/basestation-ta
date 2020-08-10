@@ -22,11 +22,9 @@ class DataUtils:
     # With time received
 
     @staticmethod
-    def subscriberPayloadToStringLog(topic, data):
-        now = datetime.now()
+    def subscriberPayloadToStringLog(topic, data, timeReceived):
         delimiter = data.split(',')
-        return '{},{},{},{},{},{},{},{}'.format(delimiter[5], topic, delimiter[2], delimiter[3], delimiter[4], delimiter[0], delimiter[1], now.strftime(
-            "%Y-%m-%d %H:%M:%S.%f"))
+        return '{},{},{},{},{},{},{},{}'.format(delimiter[5], topic, delimiter[2], delimiter[3], delimiter[4], delimiter[0], delimiter[1], timeReceived)
 
     # Convert Raw String to Dictionary (JSON like Python)
     # id=abc,temp=xx,long=xxx.xxx,lat=xxx.xxx,timestamp=yyyy-mm-dd HH:MM:ss.sss
