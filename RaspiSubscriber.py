@@ -23,8 +23,8 @@ class RaspiSubscriber:
         # logging.basicConfig(filename='./log/subscriber.log',
         #                     format='%(asctime)s %(message)s', level=logging.DEBUG)
         keepAliveInterval = 30
-        mqttTopic = [("temperature", 0), ("pressure", 0),
-                     ("hummidity", 0), ("co", 0), ("co2", 0), ("pm10", 0)]
+        mqttTopic = [("temperature", 0), ("pressure", 0), ("altitude", 0),
+                     ("hummidity", 0), ("so", 0), ("co", 0), ("co2", 0), ("pm10", 0)]
 
         mqttClient = mqtt.Client(clientName)
 
@@ -56,7 +56,8 @@ class RaspiSubscriber:
         # Save to log and temp file
         nowString = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
         sensorMsg = msg.payload.decode('utf-8')
-        DataTemp.writeStringToFile(DataUtils.subscriberPayloadToStringTemp(msg.topic, sensorMsg))
+        DataTemp.writeStringToFile(
+            DataUtils.subscriberPayloadToStringTemp(msg.topic, sensorMsg))
         Datalog.writeStringToFile(DataUtils.subscriberPayloadToStringLog(
             msg.topic, sensorMsg, nowString), sensorMsg.split(',')[0])
         SqlMonitor.sqlWrite(msg.topic, sensorMsg, nowString)
