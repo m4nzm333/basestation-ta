@@ -1,5 +1,5 @@
 gpiozero==1.5.1
-Werkzeug==0.14.1
+Werkzeug==0.15.3
 Rpi.bme280==0.2.3
 Flask==1.0.2
 paho_mqtt==1.5.0
