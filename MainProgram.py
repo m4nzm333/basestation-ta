@@ -19,14 +19,10 @@ import sys
 # from api.api import app
 
 # Main function for subscriber
-
-
 def subscribe():
     RaspiSubscriber('127.0.0.1', 1883, "bs-cd14")
 
 # Main function for publisher
-
-
 def publishTempToServer():
     raspiPublisher = RaspiPublisher('192.168.1.2', 1883, "bs-cd14")
     while 1:
@@ -46,12 +42,9 @@ def publishTempToServer():
                 time.sleep(0.5)
             DataTemp.deleteLastData()
             time.sleep(0.1)
-
 # TODO: Waiting for Confirmation from Server Broker
 
-# Get Data from Local Sensor
-
-
+# Get Data from BME280
 def getBME280():
     # TODO: ganti data row untuk masing-masing sensor
     sensorBME280 = SensorBME280()
@@ -61,13 +54,6 @@ def getBME280():
         valTemp = sensorBME280.getTemperature()
         valHum = sensorBME280.getHumidity()
         valPres = sensorBME280.getPressure()
-
-        stringTemp = "{},{},{},{},{},{}".format(
-            nowString, nowString, valTemp, '', '', 'cd14')
-        stringHum = "{},{},{},{},{},{}".format(
-            nowString, nowString, valHum, '', '', 'cd14')
-        stringPres = "{},{},{},{},{},{}".format(
-            nowString, nowString, valPres, '', '', 'cd14')
 
         Datalog.writeStringToFile("{},{},{},{},{},{},{}".format(
             'cd14', 'temperature', valTemp, '', '', nowString, ''), nowString)
@@ -126,7 +112,6 @@ def main():
         p3.kill()
         # p4.terminate()
         # p3.kill()
-
 
 # ----------------
 #       MAIN

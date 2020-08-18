@@ -24,6 +24,7 @@ class RaspiPublisher:
         # Assign Event Callbacks
         self.mqttClient.on_publish = self.on_publish
         self.mqttClient.on_connect = self.on_connect
+        self.mqttClient.on_disconnect = self.on_disconnect
 
         # Connecting
         logging.info("Connecting to MQTT Broker({:s}:{:s}).".format(mqttServer, str(mqttPort)))
@@ -69,3 +70,12 @@ class RaspiPublisher:
             #logging.info("Publish QoS 2 Success")
         except:
             logging.exception("Publish QoS 2 Failed")
+    
+    def on_disconnect(self):
+        try:
+            print('Reconnecting ....')
+            logging.info("Reconnecting ....")
+            self.mqttClient.reconnect_delay_set()
+        except:
+            logging.exception("Failed to reconnect")
+        
