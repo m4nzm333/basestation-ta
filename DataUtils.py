@@ -39,26 +39,20 @@ class DataUtils:
 
     # Check if data is not negative or 0 (data  = dictionary)
     @ staticmethod
-    def checkDataValid(data):
+    def checkDataValid(sensorName, value):
         # TODO : Fix the filter parameter
-        if 'temperature' in data:
-            if float(data['temperature']) <= 0:
-                return False
-        if 'hummidity' in data:
-            if float(data['hummidity']) <= 0:
-                return False
-        if 'pressure' in data:
-            if float(data['pressure']) <= 0:
-                return False
-        if 'co2' in data:
-            if float(data['co2']) <= 0:
-                return False
-        if 'co' in data:
-            if float(data['co']) <= 0:
-                return False
-        if 'pm10' in data:
-            if float(data['pm10']) < 0:
-                return False
+        if sensorName == 'temperature' and float(value) <= 0:
+            return False
+        if sensorName == 'humidity' and float(value) <= 0:
+            return False
+        if sensorName == 'pressure' and float(value) <= 0:
+            return False
+        if sensorName == 'co2' and float(value) <= 0:
+            return False
+        if sensorName == 'co' and float(value) <= 0:
+            return False
+        if sensorName == 'pm10' and float(value) < 0:
+            return False
         # If Valid Return True
         return True
 
@@ -66,14 +60,13 @@ class DataUtils:
     @ staticmethod
     def checkDataValidRaw(name, value):
         # TODO : Fix the filter paramter
-        # Check Temperature
         switcher = {
-            'temperature': False if value <= 0 else True,
-            'hummidity': False if value <= 0 else True,
-            'pressure': False if value <= 0 else True,
-            'co2': False if value <= 0 else True,
-            'co': False if value <= 0 else True,
-            'pm10': False if value < 0 else True  # Bisa bernilai 0
+            'temperature': False if float(value) <= 0 else True,
+            'humidity': False if float(value) <= 0 else True,
+            'pressure': False if float(value) <= 0 else True,
+            'co2': False if float(value) <= 0 else True,
+            'co': False if float(value) <= 0 else True,
+            'pm10': False if float(value) < 0 else True  # Bisa bernilai 0
         }
         return switcher.get(name, True)
 
