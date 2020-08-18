@@ -17,7 +17,15 @@ $ git clone https://gitlab.com/m4nzm333/basestation-ta
 ```
 $ pip3 install -r requirements.txt
 ```
-4. Jalankan Main Program
+4. Install i2c-tools
+```
+$ sudo apt-get install i2c-tools python-pip
+```
+5. Deteksi BME280 di alamat 0x76
+```
+$ i2cdetect -y 1
+```
+5. Jalankan Main Program
 ```
 $ python3 MainProgram.py
 ```

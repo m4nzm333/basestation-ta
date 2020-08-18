@@ -8,32 +8,40 @@ from RaspiSubscriber import RaspiSubscriber
 from RaspiPublisher import RaspiPublisher
 import time
 from multiprocessing import Process
-# from SensorBME280 import SensorBME280
+from SensorBME280 import SensorBME280
 from datetime import datetime
 from Datalog import Datalog
 from DataTemp import DataTemp
 from DataUtils import DataUtils
-from gpiozero import LED
+from SqlMonitor import SqlMonitor
+# from gpiozero import LED
 import sys
 # from api.api import app
 
 # Main function for subscriber
+
+
 def subscribe():
     RaspiSubscriber('127.0.0.1', 1883, "bs-cd14")
 
 # Main function for publisher
+
+
 def publishTempToServer():
-    raspiPublisher = RaspiPublisher('192.168.137.1', 1883, "bs-cd14")
+    raspiPublisher = RaspiPublisher('192.168.1.2', 1883, "bs-cd14")
     while 1:
         raspiPublisher.mqttClient.loop_start()
         while raspiPublisher.mqttClient.is_connected():
             lastArray = DataTemp.getArrayLastData()
             # Loop foreach data in Array
             for data in lastArray:
-                # TODO: Send to Server Broker
                 print(data)
-                # dicData = DataUtils.getDicToPublish(data)
-                # raspiPublisher.publish(dicData['topic'], dicData['message'])
+                idSensor, topic, value, lat, longit, timeSensor, timeReceived = data.split(
+                    ',')
+                # Filter if Valid
+                if DataUtils.checkDataValid(topic, value):
+                    raspiPublisher.publish(topic, '{},{},{},{},{}'.format(
+                        timeSensor, value, lat, longit, idSensor))
 
                 time.sleep(0.5)
             DataTemp.deleteLastData()
@@ -42,59 +50,83 @@ def publishTempToServer():
 # TODO: Waiting for Confirmation from Server Broker
 
 # Get Data from Local Sensor
-# def archiveLocalSensor():
-#     # TODO: ganti data row untuk masing-masing sensor
-#     led = LED(4)
-#     sensorBME280 = SensorBME280()
-#     while True:
-#         led.on()
-#         now = datetime.now()
-#         valTemperature = sensorBME280.getTemperature()
-#         valHummitidy = sensorBME280.getHummidity()
-#         valPressure = sensorBME280.getPressure()
-#         # Check Data Valid
-#         if DataUtils.checkDataValidRaw('temperature', valTemperature):          
-#             dataTemperature = "id=Raspi4-CD14,temperature={:.2f},timestamp={}".format(valTemperature, now.strftime("%Y-%m-%d %H:%M:%S.%f"))
-#             Datalog.writeStringToFile(dataTemperature)
-#         if DataUtils.checkDataValidRaw('hummidity', valHummitidy):
-#             dataHummidity = "id=Raspi4-CD14,hummidity={:.2f},timestamp={}".format(valHummitidy, now.strftime("%Y-%m-%d %H:%M:%S.%f"))
-#             Datalog.writeStringToFile(dataHummidity)
-#         if DataUtils.checkDataValidRaw('pressure', valPressure):
-#             dataPressure = "id=Raspi4-CD14,pressure={:.2f},timestamp={}".format(valPressure, now.strftime("%Y-%m-%d %H:%M:%S.%f"))
-#             Datalog.writeStringToFile(dataPressure)
-#         time.sleep(0.5)
-#         led.off()
-#         time.sleep(4.5)
+
+
+def getBME280():
+    # TODO: ganti data row untuk masing-masing sensor
+    sensorBME280 = SensorBME280()
+    while True:
+        now = datetime.now()
+        nowString = now.strftime("%Y-%m-%d %H:%M:%S.%f")
+        valTemp = sensorBME280.getTemperature()
+        valHum = sensorBME280.getHumidity()
+        valPres = sensorBME280.getPressure()
+
+        stringTemp = "{},{},{},{},{},{}".format(
+            nowString, nowString, valTemp, '', '', 'cd14')
+        stringHum = "{},{},{},{},{},{}".format(
+            nowString, nowString, valHum, '', '', 'cd14')
+        stringPres = "{},{},{},{},{},{}".format(
+            nowString, nowString, valPres, '', '', 'cd14')
+
+        Datalog.writeStringToFile("{},{},{},{},{},{},{}".format(
+            'cd14', 'temperature', valTemp, '', '', nowString, ''), nowString)
+        Datalog.writeStringToFile("{},{},{},{},{},{},{}".format(
+            'cd14', 'humidity', valHum, '', '', nowString, ''), nowString)
+        Datalog.writeStringToFile("{},{},{},{},{},{},{}".format(
+            'cd14', 'pressure', valPres, '', '', nowString, ''), nowString)
+        # Datalog.writeStringToFile("{},{},{},{},{},{},{}".format(
+        #     'cd14', 'altitude', valTemp, '', '', nowString, ''), nowString)
+
+        DataTemp.writeStringToFile("{},{},{},{},{},{},{}".format(
+            'cd14', 'temperature', valTemp, '', '', nowString, ''))
+        DataTemp.writeStringToFile("{},{},{},{},{},{},{}".format(
+            'cd14', 'humidity', valHum, '', '', nowString, ''))
+        DataTemp.writeStringToFile("{},{},{},{},{},{},{}".format(
+            'cd14', 'pressure', valPres, '', '', nowString, ''))
+        # DataTemp.writeStringToFile("{},{},{},{},{},{},{}".format(
+        #     'cd14', 'temperature', valTemp, '', '', nowString, ''))
+        SqlMonitor.sqlWrite('temperature', "{},{},{},{},{},{}".format(
+            nowString, nowString, valTemp, '', '', 'cd14'), nowString)
+        SqlMonitor.sqlWrite('humidity', "{},{},{},{},{},{}".format(
+            nowString, nowString, valHum, '', '', 'cd14'), nowString)
+        SqlMonitor.sqlWrite('pressure', "{},{},{},{},{},{}".format(
+            nowString, nowString, valPres, '', '', 'cd14'), nowString)
+
+        time.sleep(10)
 
 # Start API HTTP Server
 # def startApiServer():
 #     app.run('0.0.0.0', 8000)
 
 # Main function for run all function at the same time (Multiprocessing)
+
+
 def main():
     try:
         # Function
         p1 = Process(target=subscribe)
+        p2 = Process(target=getBME280)
         p3 = Process(target=publishTempToServer)
         p1.start()
+        p2.start()
         p3.start()
         p1.join()
+        p2.join()
         p3.join()
-        # p2 = Process(target=archiveLocalSensor)
-        # p2.start()
-        # p2.join()
         # p4 = Process(target=startApiServer)
         # p4.start()
         # p4.join()
     except KeyboardInterrupt:
         p1.terminate()
         p1.kill()
-        # p2.terminate()
-        # p2.kill()
+        p2.terminate()
+        p2.kill()
         p3.terminate()
         p3.kill()
         # p4.terminate()
         # p3.kill()
+
 
 # ----------------
 #       MAIN
