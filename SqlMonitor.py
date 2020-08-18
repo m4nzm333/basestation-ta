@@ -7,6 +7,7 @@
 import sqlite3
 from datetime import datetime
 import os
+import logging
 
 
 class SqlMonitor:
@@ -22,18 +23,28 @@ class SqlMonitor:
     # Write to SQL
     @staticmethod
     def sqlWrite(topic, data, nowString):
-        SqlMonitor.createDir()
-        delimiter = data.split(',')
-        sensorDate = datetime.strptime(delimiter[0], "%Y-%m-%d %H:%M:%S.%f")
+        # Login
+        logging.basicConfig(filename='./log/sqlite.log',
+                            format='%(asctime)s %(message)s', level=logging.DEBUG)
+        try:
+            SqlMonitor.createDir()
+            delimiter = data.split(',')
+            sensorDate = datetime.strptime(delimiter[0], "%Y-%m-%d %H:%M:%S.%f")
 
-        conn = sqlite3.connect('./db/{}-{}.db'.format(sensorDate.year, sensorDate.month))
-        c = conn.cursor()
-        # Create table
-        c.execute("CREATE TABLE IF NOT EXISTS '%s' (sensorTime text NULL, sensorSendTime TEXT NULL, receivedTime text NULL, sendTime text NULL, confirmationTime, id, value, lat NULL, long NULL)" % topic)
-        item = (delimiter[0], delimiter[1], nowString, None, None, delimiter[5], delimiter[2], delimiter[3], delimiter[4])
-        c.execute("INSERT INTO '%s' values (?, ?, ?, ?, ?, ?, ?, ?, ?)" % topic, item)
-        conn.commit()
-        conn.close()
+            conn = sqlite3.connect(
+                './db/{}-{}.db'.format(sensorDate.year, sensorDate.month))
+            c = conn.cursor()
+            # Create table
+            c.execute("CREATE TABLE IF NOT EXISTS '%s' (sensorTime text NULL, sensorSendTime TEXT NULL, receivedTime text NULL, sendTime text NULL, confirmationTime, id, value, lat NULL, long NULL)" % topic)
+            item = (delimiter[0], delimiter[1], nowString, None, None,
+                    delimiter[5], delimiter[2], delimiter[3], delimiter[4])
+            c.execute("INSERT INTO '%s' values (?, ?, ?, ?, ?, ?, ?, ?, ?)" %
+                    topic, item)
+            conn.commit()
+            conn.close()
+        except:
+            logging.exception("Error at writing db sql")
+        
 
 # SqlMonitor.createDir()
 # topic = 'co2'
