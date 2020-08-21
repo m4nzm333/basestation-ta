@@ -29,7 +29,8 @@ class SqlMonitor:
         try:
             SqlMonitor.createDir()
             delimiter = data.split(',')
-            sensorDate = datetime.strptime(delimiter[0], "%Y-%m-%d %H:%M:%S.%f")
+            sensorDate = datetime.strptime(
+                delimiter[0], "%Y-%m-%d %H:%M:%S.%f")
 
             conn = sqlite3.connect(
                 './db/{}-{}.db'.format(sensorDate.year, sensorDate.month))
@@ -39,12 +40,22 @@ class SqlMonitor:
             item = (delimiter[0], delimiter[1], nowString, None, None,
                     delimiter[5], delimiter[2], delimiter[3], delimiter[4])
             c.execute("INSERT INTO '%s' values (?, ?, ?, ?, ?, ?, ?, ?, ?)" %
-                    topic, item)
+                      topic, item)
             conn.commit()
             conn.close()
         except:
             logging.exception("Error at writing db sql")
-        
+
+    @staticmethod
+    def getQuery(stringQuery):
+        conn = sqlite3.connect('./db/2020-8.db')
+        c = conn.cursor()
+        data = []
+        for row in c.execute(stringQuery):
+            time, value = row
+            data.append({'time':time, 'value':value})
+        conn.close()
+        return data
 
 # SqlMonitor.createDir()
 # topic = 'co2'

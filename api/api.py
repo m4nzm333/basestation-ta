@@ -1,9 +1,15 @@
 from flask import Flask, request, redirect, url_for, jsonify, render_template
 from werkzeug.utils import secure_filename
 import os
-# For Random
-import random
+# import random
 from gpiozero import CPUTemperature
+import psutil
+from datetime import datetime
+import sqlite3
+
+import sys
+sys.path.append(".")
+from SqlMonitor import SqlMonitor
 
 UPLOAD_FOLDER = './data/post'
 ALLOWED_EXTENSIONS = {'txt'}
@@ -40,5 +46,26 @@ def getFiles():
 @app.route('/getStatus', methods=['GET'])
 def getStatus():
     cpu = CPUTemperature()
-    # TODO : Get memory Load
-    return jsonify({'cpuTemp': cpu.temperature, 'memoryLoad': random.randint(300,500)})
+    now = datetime.now()
+    memory = dict(psutil.virtual_memory()._asdict())
+    return jsonify(
+        {
+            'cpu' : {
+                'temp' : str(round(cpu.temperature, 2)),
+                'utilize' : str(psutil.cpu_percent())
+            },
+            'memory' : {
+                'percent' : str(memory['percent']),
+                'used' : str(memory['used']),
+                'total' : str(memory['total'])
+            },
+            'datetime' : str(now)
+        }
+    )
+
+@app.route('/getLast50rows', methods=['GET'])
+def getLast50Rows():
+    data = SqlMonitor.getQuery('SELECT sensorTime, value FROM (SELECT sensorTime, value FROM temperature WHERE id = "cd14" ORDER BY sensorTime DESC LIMIT 100) ORDER BY sensorTime')
+    return jsonify(data)
+
+app.run('192.168.200.1', port=8080, debug=True)
