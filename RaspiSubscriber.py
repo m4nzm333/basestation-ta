@@ -24,7 +24,7 @@ class RaspiSubscriber:
                             format='%(asctime)s %(message)s', level=logging.DEBUG)
         keepAliveInterval = 30
         mqttTopic = [("temperature", 0), ("pressure", 0), ("altitude", 0),
-                     ("hummidity", 0), ("so", 0), ("co", 0), ("co2", 0), ("pm10", 0)]
+                     ("humidity", 0), ("so", 0), ("co", 0), ("co2", 0), ("pm10", 0)]
 
         mqttClient = mqtt.Client(clientName)
 
