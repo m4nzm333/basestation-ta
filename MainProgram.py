@@ -24,7 +24,8 @@ def subscribe():
 
 # Main function for publisher
 def publishTempToServer():
-    raspiPublisher = RaspiPublisher('192.168.1.2', 1883, "bs-cd14")
+    # Server : 10.0.12.127
+    raspiPublisher = RaspiPublisher('192.168.1.11', 1883, "bs-cd14")
     while 1:
         raspiPublisher.mqttClient.loop_start()
         while raspiPublisher.mqttClient.is_connected():
@@ -39,7 +40,7 @@ def publishTempToServer():
                     raspiPublisher.publish(topic, '{},{},{},{},{}'.format(
                         timeSensor, value, lat, longit, idSensor))
 
-                time.sleep(0.5)
+                time.sleep(0.4)
             DataTemp.deleteLastData()
             time.sleep(0.1)
 # TODO: Waiting for Confirmation from Server Broker
@@ -51,35 +52,38 @@ def getBME280():
     while True:
         now = datetime.now()
         nowString = now.strftime("%Y-%m-%d %H:%M:%S.%f")
-        valTemp = sensorBME280.getTemperature()
-        valHum = sensorBME280.getHumidity()
-        valPres = sensorBME280.getPressure()
+        valTemp = round(sensorBME280.getTemperature(), 2)
+        valHum = round(sensorBME280.getHumidity(), 2)
+        valPres = round(sensorBME280.getPressure(), 2)
+
+        lat = '-5.1295737'
+        longit = '119.4821296'
 
         Datalog.writeStringToFile("{},{},{},{},{},{},{}".format(
-            'cd14', 'temperature', valTemp, '', '', nowString, ''), nowString)
+            'cd14', 'temperature', valTemp, lat, longit, nowString, ''), nowString)
         Datalog.writeStringToFile("{},{},{},{},{},{},{}".format(
-            'cd14', 'humidity', valHum, '', '', nowString, ''), nowString)
+            'cd14', 'humidity', valHum, lat, longit, nowString, ''), nowString)
         Datalog.writeStringToFile("{},{},{},{},{},{},{}".format(
-            'cd14', 'pressure', valPres, '', '', nowString, ''), nowString)
+            'cd14', 'pressure', valPres, lat, longit, nowString, ''), nowString)
         # Datalog.writeStringToFile("{},{},{},{},{},{},{}".format(
         #     'cd14', 'altitude', valTemp, '', '', nowString, ''), nowString)
 
         DataTemp.writeStringToFile("{},{},{},{},{},{},{}".format(
-            'cd14', 'temperature', valTemp, '', '', nowString, ''))
+            'cd14', 'temperature', valTemp, lat, longit, nowString, ''))
         DataTemp.writeStringToFile("{},{},{},{},{},{},{}".format(
-            'cd14', 'humidity', valHum, '', '', nowString, ''))
+            'cd14', 'humidity', valHum, lat, longit, nowString, ''))
         DataTemp.writeStringToFile("{},{},{},{},{},{},{}".format(
-            'cd14', 'pressure', valPres, '', '', nowString, ''))
+            'cd14', 'pressure', valPres, lat, longit, nowString, ''))
         # DataTemp.writeStringToFile("{},{},{},{},{},{},{}".format(
         #     'cd14', 'temperature', valTemp, '', '', nowString, ''))
         SqlMonitor.sqlWrite('temperature', "{},{},{},{},{},{}".format(
-            nowString, nowString, valTemp, '', '', 'cd14'), nowString)
+            nowString, nowString, valTemp, lat, longit, 'cd14'), nowString)
         SqlMonitor.sqlWrite('humidity', "{},{},{},{},{},{}".format(
-            nowString, nowString, valHum, '', '', 'cd14'), nowString)
+            nowString, nowString, valHum, lat, longit, 'cd14'), nowString)
         SqlMonitor.sqlWrite('pressure', "{},{},{},{},{},{}".format(
-            nowString, nowString, valPres, '', '', 'cd14'), nowString)
+            nowString, nowString, valPres, lat, longit, 'cd14'), nowString)
 
-        time.sleep(10)
+        time.sleep(60)
 
 # Start API HTTP Server
 # def startApiServer():
