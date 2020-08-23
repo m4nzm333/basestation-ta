@@ -139,7 +139,7 @@ cython_debug/
 
 # This Project Ignore
 api/__pycache__/*
-log/*
+# log/*
 .vscode/*
 temp/*
 db/*
