@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, url_for, jsonify, render_template
+from flask import Flask, request, redirect, url_for, jsonify, render_template, send_from_directory
 from werkzeug.utils import secure_filename
 import os
 # import random
@@ -7,14 +7,12 @@ import psutil
 from datetime import datetime
 import sqlite3
 
-import sys
-sys.path.append(".")
-from SqlMonitor import SqlMonitor
+from includes.SqlMonitor import SqlMonitor
 
 UPLOAD_FOLDER = './data/post'
 ALLOWED_EXTENSIONS = {'txt'}
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="webdoc/templates", static_folder='webdoc/static')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 def allowed_file(filename):
@@ -63,9 +61,13 @@ def getStatus():
         }
     )
 
-@app.route('/getLast50rows', methods=['GET'])
-def getLast50Rows():
+@app.route('/getLast100rows', methods=['GET'])
+def getLast100Rows():
     data = SqlMonitor.getQuery('SELECT sensorTime, value FROM (SELECT sensorTime, value FROM temperature WHERE id = "cd14" ORDER BY sensorTime DESC LIMIT 100) ORDER BY sensorTime')
     return jsonify(data)
 
-app.run('192.168.200.1', port=8080, debug=True)
+app.run('192.168.1.2', port=8080, debug=True)
+
+@app.route('/<path:filename>')
+def custom_static(filename):
+    return send_from_directory('./webdoc/static/', filename)

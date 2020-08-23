@@ -18,8 +18,8 @@ class SensorBME280:
     bus = smbus2.SMBus(port)
     calibration_params = bme280.load_calibration_params(bus, address)
 
-    def __init__(self):
-        logging.basicConfig(filename='./log/bme280.log', format='%(asctime)s %(message)s', level=logging.DEBUG)
+    # def __init__(self):
+    #     logging.basicConfig(filename='../log/bme280.log', format='%(asctime)s %(message)s', level=logging.DEBUG)
             
     def getTemperature(self):
         try:

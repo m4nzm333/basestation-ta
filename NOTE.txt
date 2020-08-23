@@ -1,0 +1,35 @@
+======================
+SIM800L
+=====================
+- Disable serial0 in raspi-config -> Interfaces -> Serial
+
+- Install minicom
+$ apt-get install minicom
+- Run minicom
+$ sudo minicom -D /dev/ttyAMA0 -b 9600
+- In AT Commant
+
+
+- To kill all minicom
+$ sudo killall -9 minicom
+
+mySerial.println("AT"); //Once the handshake test is successful, it will back to OK
+  updateSerial();
+  mySerial.println("AT+CSQ"); //Signal quality test, value range is 0-31 , 31 is the best
+  updateSerial();
+  mySerial.println("AT+CCID"); //Read SIM information to confirm whether the SIM is plugged
+  updateSerial();
+  mySerial.println("AT+CREG?"); //Check whether it has registered in the network
+
+- Enable network
+apt-get install ppp screen elinks
+https://www.rhydolabz.com/wiki/?p=16325
+
+=======================
+Using Model Huawei ec156
+https://www.instructables.com/id/Giving-the-Raspberry-Pi-a-Serial-Modem-Using-the-H/
+========================
+- lsusb
+Output = Bus 001 Device 009: ID 12d1:140c Huawei Technologies Co., Ltd. E180v
+
+
