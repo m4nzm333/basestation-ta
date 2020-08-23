@@ -20,7 +20,6 @@ function initChart(chart, data) {
     am4core.useTheme(am4themes_animated);
     // Themes end
     // Create chart instance
-
     // Add data
     chart.data = data;
     // Set input format for the dates
@@ -29,7 +28,6 @@ function initChart(chart, data) {
     var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
     var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
     valueAxis.title.text = "Temperature"
-    console.log(valueAxis.title);
     
     // Create series
     var series = chart.series.push(new am4charts.LineSeries());
@@ -38,6 +36,7 @@ function initChart(chart, data) {
     series.tooltipText = "{value}°C"
     series.strokeWidth = 2;
     series.minBulletDistance = 15;
+    series.stroke = am4core.color("#FF0000")
     // Drop-shaped tooltips
     series.tooltip.background.cornerRadius = 20;
     series.tooltip.background.strokeOpacity = 0;
