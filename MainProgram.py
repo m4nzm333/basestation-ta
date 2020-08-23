@@ -21,10 +21,14 @@ import sys
 # from api.api import app
 
 # Main function for subscriber
+
+
 def subscribe():
     RaspiSubscriber('127.0.0.1', 1883, "bs-cd14")
 
 # Main function for publisher
+
+
 def publishTempToServer():
     # Server : 10.0.12.127
     raspiPublisher = RaspiPublisher('192.168.1.11', 1883, "bs-cd14")
@@ -48,6 +52,8 @@ def publishTempToServer():
 # TODO: Waiting for Confirmation from Server Broker
 
 # Get Data from BME280
+
+
 def getBME280():
     # TODO: ganti data row untuk masing-masing sensor
     sensorBME280 = SensorBME280()
@@ -118,6 +124,7 @@ def main():
         p3.kill()
         # p4.terminate()
         # p3.kill()
+
 
 # ----------------
 #       MAIN
