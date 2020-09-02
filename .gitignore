@@ -142,6 +142,6 @@ api/__pycache__/*
 log/*
 !log/*.keep
 .vscode/*
-.develop/*
+develop/*
 temp/*
 db/*
