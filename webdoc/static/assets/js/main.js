@@ -1,21 +1,24 @@
-// const getStatusRaspi = () => {
-// 	$.ajax({
-// 		url: 'getStatus',
-// 		success: (respond) => {
-// 			$("#valueCPUTemp").text(respond.cpuTemp);
-// 			$("#valueMemoryLoad").text(respond.memoryLoad);
-// 		}
-// 	})
-// }
+const getStatusRaspi = () => {
+    $.ajax({
+        url: 'getStatus',
+        success: (respond) => {
+            console.log(respond);
+            $("#valueCPUTemp").text(respond.cpuTemp);
+            $("#valueMemoryLoad").text(respond.memoryLoad);
+        }
+    })
+}
 
-// getStatusRaspi();
-// setInterval(() => {
-// 	getStatusRaspi();
-// }, 5000)
+getStatusRaspi();
+setInterval(() => {
+    getStatusRaspi();
+}, 5000)
 
 var chartTemp = am4core.create("chartTemp", am4charts.XYChart);
 
-function initChart(chart, data) {
+
+function initDateChart(chart, data) {
+    console.log(data)
     // Themes begin
     am4core.useTheme(am4themes_animated);
     // Themes end
@@ -26,14 +29,15 @@ function initChart(chart, data) {
     chart.dateFormatter.inputDateFormat = "yyyy-MM-dd HH:mm:ss.SSSSSS";
     // Create axes
     var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+
     var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
     valueAxis.title.text = "Temperature"
-    
+
     // Create series
     var series = chart.series.push(new am4charts.LineSeries());
     series.dataFields.valueY = "value";
     series.dataFields.dateX = "date";
-    series.tooltipText = "{value}°C"
+    series.tooltipText = "{value}°C - {date}"
     series.strokeWidth = 2;
     series.minBulletDistance = 15;
     series.stroke = am4core.color("#FF0000")
@@ -65,8 +69,7 @@ function initChart(chart, data) {
     chart.scrollbarX = new am4charts.XYChartScrollbar();
     chart.scrollbarX.series.push(series);
     chart.scrollbarX.parent = chart.bottomAxesContainer;
-    dateAxis.start = 0.79;
-    dateAxis.keepSelection = true;
+
     // console.log(chart);
 }
 
@@ -84,7 +87,7 @@ $.ajax({
                 value: element.value
             }
         })
-        initChart(chartTemp, respond)
+        initDateChart(chartTemp, respond)
     }
 })
 

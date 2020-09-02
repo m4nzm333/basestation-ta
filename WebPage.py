@@ -69,13 +69,11 @@ def getStatus():
 @app.route('/getLast100rows', methods=['GET'])
 def getLast100Rows():
     data = SqlMonitor.getQuery(
-        'SELECT sensorTime, value FROM (SELECT sensorTime, value FROM temperature WHERE id = "cd14" ORDER BY sensorTime DESC LIMIT 100) ORDER BY sensorTime')
+        'SELECT sensorTime, value FROM (SELECT sensorTime, value FROM temperature WHERE id = "cd14" ORDER BY sensorTime DESC LIMIT 600) ORDER BY sensorTime')
     return jsonify(data)
-
-
-app.run('192.168.1.2', port=8080, debug=True)
-
 
 @app.route('/<path:filename>')
 def custom_static(filename):
     return send_from_directory('./webdoc/static/', filename)
+
+app.run('10.3.141.1', port=8080, debug=True)
