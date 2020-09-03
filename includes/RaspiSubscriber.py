@@ -7,11 +7,12 @@
 import paho.mqtt.client as mqtt
 from datetime import datetime
 import logging
-
-from includes.DataUtils import DataUtils
 from includes.Datalog import Datalog
 from includes.DataTemp import DataTemp
 from includes.SqlMonitor import SqlMonitor
+from includes.CounterData import CounterData
+from includes.DataUtils import DataUtils
+from includes.CounterData import CounterData
 
 # Class for Raspberry Subscriber
 
@@ -49,21 +50,30 @@ class RaspiSubscriber:
 
     # Read Data Function
     def on_message(self, mosq, obj, msg):
-        # Print on console
-        # print('---------------------------')
-        # print(msg.topic)
-        # print(msg.payload.decode('utf-8'))
-        # Save to log and temp file
         nowString = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
         sensorMsg = msg.payload.decode('utf-8')
-        print(msg.topic+' '+sensorMsg)
-        DataTemp.writeStringToFile(
-            DataUtils.subscriberPayloadToStringTemp(msg.topic, sensorMsg))
-        Datalog.writeStringToFile(DataUtils.subscriberPayloadToStringLog(
-            msg.topic, sensorMsg, nowString), sensorMsg.split(',')[0])
-        SqlMonitor.sqlWrite(msg.topic, sensorMsg, nowString)
+       
+        CounterData.upReceived()
+        try:
+            print("|   Received   | pending | {}  | {}".format(msg.topic, sensorMsg))
+            Datalog.writeStringToFile(DataUtils.subscriberPayloadToStringLog(
+                msg.topic, sensorMsg, nowString), sensorMsg.split(',')[0])
+            splitter = sensorMsg.split(',')
+            if len(splitter) == 6 and splitter[0] != '2000-00-00 08:00:00.484000':
+                DataTemp.writeStringToFile(
+                    DataUtils.subscriberPayloadToStringTemp(msg.topic, sensorMsg))
+                SqlMonitor.sqlWrite(msg.topic, sensorMsg, nowString)
+            else:
+                print("|   Received   | invalid! | {}  | {}".format(msg.topic, sensorMsg))
+                CounterData.upBlocked()
+
+        except:
+            print("|   Received   | invalid! | {}  | {}".format(msg.topic, sensorMsg))
+            CounterData.upBlocked()
+            pass
 
     # Show error if connection unsuccessful
+
     def on_connect(self, client, userdata, flag, rc):
         if rc == 0:
             logging.info("Connection successful. Waiting for data.")

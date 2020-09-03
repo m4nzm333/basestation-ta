@@ -58,7 +58,7 @@ class RaspiPublisher:
     def publish(self, topic, message):
         try:
             self.mqttClient.publish(topic, message, 0)
-            print("Published = Topic: {}; Message: {}".format(topic, message))
+            print("Published : Topic: {}; Message: {}".format(topic, message))
             #logging.info("Publish Success")
         except:
             logging.exception("Publish Failed")

@@ -16,7 +16,7 @@ class SqlMonitor:
     @staticmethod
     def createDir():
         try:
-            os.makedirs("./db")
+            os.makedirs("./db/data")
         except:
             pass
 
@@ -33,7 +33,7 @@ class SqlMonitor:
                 delimiter[0], "%Y-%m-%d %H:%M:%S.%f")
 
             conn = sqlite3.connect(
-                './db/{}-{}.db'.format(sensorDate.year, sensorDate.month))
+                './db/data/{}-{}-{}.db'.format(sensorDate.year, sensorDate.month, sensorDate.day))
             c = conn.cursor()
             # Create table
             c.execute("CREATE TABLE IF NOT EXISTS '%s' (sensorTime text NULL, sensorSendTime TEXT NULL, receivedTime text NULL, sendTime text NULL, confirmationTime, id, value, lat NULL, long NULL)" % topic)
@@ -47,13 +47,26 @@ class SqlMonitor:
             logging.exception("Error at writing db sql")
 
     @staticmethod
+    def sqlUpdate(idSensor, sensorDateStr, topic, sendTime):
+        sensorDate = datetime.strptime(
+            sensorDateStr, "%Y-%m-%d %H:%M:%S.%f")
+        conn = sqlite3.connect(
+            './db/{}-{}-{}.db'.format(sensorDate.year, sensorDate.month, sensorDate.day))
+        c = conn.cursor()
+        # print()
+        query = 'UPDATE {} SET sendTime = "{}" WHERE id = "{}" AND sensorTime = "{}"'.format(topic, sendTime, idSensor, sensorDateStr)
+        c.execute(query)
+        conn.commit()
+        conn.close()
+
+    @staticmethod
     def getQuery(stringQuery):
         conn = sqlite3.connect('./db/2020-8.db')
         c = conn.cursor()
         data = []
         for row in c.execute(stringQuery):
             time, value = row
-            data.append({'time':time, 'value':value})
+            data.append({'time': time, 'value': value})
         conn.close()
         return data
 
