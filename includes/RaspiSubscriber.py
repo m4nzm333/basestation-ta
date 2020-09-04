@@ -52,10 +52,11 @@ class RaspiSubscriber:
     def on_message(self, mosq, obj, msg):
         nowString = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
         sensorMsg = msg.payload.decode('utf-8')
-       
+
         CounterData.upReceived()
         try:
-            print("|   Received   | pending | {}  | {}".format(msg.topic, sensorMsg))
+            print("| Received |\33[34m  pending  \033[0m| {} | {}".format(
+                msg.topic, sensorMsg))
             Datalog.writeStringToFile(DataUtils.subscriberPayloadToStringLog(
                 msg.topic, sensorMsg, nowString), sensorMsg.split(',')[0])
             splitter = sensorMsg.split(',')
@@ -64,11 +65,13 @@ class RaspiSubscriber:
                     DataUtils.subscriberPayloadToStringTemp(msg.topic, sensorMsg))
                 SqlMonitor.sqlWrite(msg.topic, sensorMsg, nowString)
             else:
-                print("|   Received   | invalid! | {}  | {}".format(msg.topic, sensorMsg))
+                print("| Received |\033[91m invalid! \033[0m| {} | {}".format(
+                    msg.topic, sensorMsg))
                 CounterData.upBlocked()
 
         except:
-            print("|   Received   | invalid! | {}  | {}".format(msg.topic, sensorMsg))
+            print("| Received |\033[91m invalid! \033[0m| {} | {}".format(
+                msg.topic, sensorMsg))
             CounterData.upBlocked()
             pass
 
@@ -90,6 +93,7 @@ class RaspiSubscriber:
         if rc == 4:
             logging.error("Connection refused - not authorised.")
             print("Connection refused - not authorised.")
+        print("|---Action---|----Status----|----Topic----|----data")
 
     def on_subscribe(self, mosq, obj, mid, granted_qos):
         logging.info('Subscribe to {:s}'.format(str(mosq.topic)))

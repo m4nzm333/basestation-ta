@@ -32,7 +32,6 @@ import sys
 
 def subscribe():
     RaspiSubscriber('127.0.0.1', 1883, "bs-cd14")
-    print("|---Action---|----Status----|----Topic----|----data")
 # Main function for publisher
 
 
@@ -51,15 +50,15 @@ def publishTempToServer():
                     # Filter if Valid
                     msg = '{},{},{},{},{}'.format(
                         timeSensor, value, lat, longit, idSensor)
-                    CounterData.upSent()
                     if DataUtils.checkDataValid(topic, value):
                         raspiPublisher.publish(topic, msg)
                         SqlMonitor.sqlUpdate(
                             idSensor, timeSensor, topic, str(datetime.now()))
-                        print("| Publish | valid | {} | {}".format(topic, msg))
+                        print("| Publish  |\33[32m  valid    \033[0m| {} | {}".format(topic, msg))
+                        CounterData.upSent()
                     else:
                         CounterData.upBlocked()
-                        print("| Publish | invalid | {} | {}".format(topic, msg))
+                        print("| Publish  |\033[91m  invalid! \033[0m| {} | {}".format(topic, msg))
                     time.sleep(0.2)
             except:
                 pass
@@ -144,38 +143,38 @@ def getLocation():
 
 
 # def getDSM():
-    button = Button(17)
-    while True:
-        x1 = 2500
-        y1 = 5
-        x2 = 12500
-        y2 = 25
-        m = (y2 - y1) / (x2 - x1)  # Gradien
-        start = int(time.time() * 1000000)
-        lowDuration = 0
-        while True:
-            dif = int(time.time() * 1000000)
-            if button.is_pressed:
-                lowDuration += 100
-                # print("Button is not pressed")
-            if (dif - start) >= 30000000:  # 30 sec
-                break
-            time.sleep(0.0001)
-        lowRatio = (lowDuration / 30000000) * 100
-        xPPM = ((lowRatio - 5) / m) + 2500
-        valPpm = round(xPPM, 0)
+    # button = Button(17)
+    # while True:
+    #     x1 = 2500
+    #     y1 = 5
+    #     x2 = 12500
+    #     y2 = 25
+    #     m = (y2 - y1) / (x2 - x1)  # Gradien
+    #     start = int(time.time() * 1000000)
+    #     lowDuration = 0
+    #     while True:
+    #         dif = int(time.time() * 1000000)
+    #         if button.is_pressed:
+    #             lowDuration += 100
+    #             # print("Button is not pressed")
+    #         if (dif - start) >= 30000000:  # 30 sec
+    #             break
+    #         time.sleep(0.0001)
+    #     lowRatio = (lowDuration / 30000000) * 100
+    #     xPPM = ((lowRatio - 5) / m) + 2500
+    #     valPpm = round(xPPM, 0)
 
-        nowString = str(datetime.now())
+    #     nowString = str(datetime.now())
 
-        lat = getLat()
-        longit = getLong()
+    #     lat = getLat()
+    #     longit = getLong()
 
-        Datalog.writeStringToFile("{},{},{},{},{},{},{}".format(
-            'cd14', 'ppm10', valPpm, lat, longit, nowString, ''), nowString)
-        DataTemp.writeStringToFile("{},{},{},{},{},{},{}".format(
-            'cd14', 'ppm10', valPpm, lat, longit, nowString, ''))
-        SqlMonitor.sqlWrite('ppm10', "{},{},{},{},{},{}".format(
-            nowString, nowString, valPpm, lat, longit, 'cd14'), nowString)
+    #     Datalog.writeStringToFile("{},{},{},{},{},{},{}".format(
+    #         'cd14', 'ppm10', valPpm, lat, longit, nowString, ''), nowString)
+    #     DataTemp.writeStringToFile("{},{},{},{},{},{},{}".format(
+    #         'cd14', 'ppm10', valPpm, lat, longit, nowString, ''))
+    #     SqlMonitor.sqlWrite('ppm10', "{},{},{},{},{},{}".format(
+    #         nowString, nowString, valPpm, lat, longit, 'cd14'), nowString)
 
 
 # def getCPU():

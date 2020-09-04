@@ -39,7 +39,7 @@ class CounterData:
             cursor.execute(
                 "CREATE TABLE IF NOT EXISTS counter (time text NULL, received BIGINT NULL, blocked BIGINT NULL, sent BIGINT NULL)")
             cursor.execute(
-                "INSERT INTO counter values ('{}', 0, 0, 0)".format(nowString))
+                "INSERT INTO counter values ('{}', 1, 0, 0)".format(nowString))
         else:
             cursor.execute(
                 "UPDATE counter SET received = received+1 WHERE time='{}'".format(nowString))
@@ -66,7 +66,7 @@ class CounterData:
             cursor.execute(
                 "CREATE TABLE IF NOT EXISTS counter (time text NULL, received BIGINT NULL, blocked BIGINT NULL, sent BIGINT NULL)")
             cursor.execute(
-                "INSERT INTO counter values ('{}', 0, 0, 0)".format(nowString))
+                "INSERT INTO counter values ('{}', 0, 1, 0)".format(nowString))
         else:
             cursor.execute(
                 "UPDATE counter SET blocked = blocked+1 WHERE time='{}'".format(nowString))
@@ -93,7 +93,7 @@ class CounterData:
             cursor.execute(
                 "CREATE TABLE IF NOT EXISTS counter (time text NULL, received BIGINT NULL, blocked BIGINT NULL, sent BIGINT NULL)")
             cursor.execute(
-                "INSERT INTO counter values ('{}', 0, 0, 0)".format(nowString))
+                "INSERT INTO counter values ('{}', 0, 0, 1)".format(nowString))
         else:
             cursor.execute(
                 "UPDATE counter SET sent = sent+1 WHERE time='{}'".format(nowString))

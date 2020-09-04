@@ -8,7 +8,6 @@
 import random
 from datetime import datetime
 from includes.Datalog import Datalog
-from includes.CounterData import CounterData
 
 
 class DataUtils:
@@ -42,23 +41,17 @@ class DataUtils:
     @ staticmethod
     def checkDataValid(sensorName, value):
         # TODO : Fix the filter parameter
-        if sensorName == 'temperature' and float(value) <= 0 and value == "nan":
-            CounterData.upBlocked()
+        if sensorName == 'temperature' and (float(value) <= 0 or value == "nan"):
             return False
-        if sensorName == 'humidity' and float(value) <= 0 and value == "nan":
-            CounterData.upBlocked()
+        if sensorName == 'humidity' and (float(value) <= 0 or value == "nan"):
             return False
-        if sensorName == 'pressure' and float(value) <= 0 and value == "nan":
-            CounterData.upBlocked()
+        if sensorName == 'pressure' and (float(value) <= 0 or value == "nan"):
             return False
-        if sensorName == 'co2' and float(value) <= 0 and value == "nan":
-            CounterData.upBlocked()
+        if sensorName == 'co2' and (float(value) <= 0 or value == "nan"):
             return False
-        if sensorName == 'co' and float(value) <= 0 and value == "nan":
-            CounterData.upBlocked()
+        if sensorName == 'co' and (float(value) <= 0 or value == "nan"):
             return False
-        if sensorName == 'pm10' and float(value) < 0 and value == "nan":
-            CounterData.upBlocked()
+        if sensorName == 'pm10' and (float(value) < 0 or value == "nan"):
             return False
         # If Valid Return True
         return True
