@@ -55,8 +55,6 @@ class RaspiSubscriber:
 
         CounterData.upReceived()
         try:
-            print("| Received |\33[34m  pending  \033[0m| {} | {}".format(
-                msg.topic, sensorMsg))
             Datalog.writeStringToFile(DataUtils.subscriberPayloadToStringLog(
                 msg.topic, sensorMsg, nowString), sensorMsg.split(',')[0])
             splitter = sensorMsg.split(',')
@@ -64,6 +62,8 @@ class RaspiSubscriber:
                 DataTemp.writeStringToFile(
                     DataUtils.subscriberPayloadToStringTemp(msg.topic, sensorMsg))
                 SqlMonitor.sqlWrite(msg.topic, sensorMsg, nowString)
+                print("| Received |\33[32m  valid    \033[0m| {} | {}".format(
+                    msg.topic, sensorMsg))
             else:
                 print("| Received |\033[91m invalid! \033[0m| {} | {}".format(
                     msg.topic, sensorMsg))
