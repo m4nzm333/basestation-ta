@@ -58,24 +58,3 @@ class SqlMonitor:
         c.execute(query)
         conn.commit()
         conn.close()
-
-    # @staticmethod
-    # def getQuery(stringQuery):
-    #     conn = sqlite3.connect('./db/2020-8.db')
-    #     c = conn.cursor()
-    #     data = []
-    #     for row in c.execute(stringQuery):
-    #         time, value = row
-    #         data.append({'time': time, 'value': value})
-    #     conn.close()
-    #     return data
-
-# SqlMonitor.createDir()
-# topic = 'co2'
-# conn = sqlite3.connect('./db/abu.db')
-# c = conn.cursor()
-# # Create table
-# c.execute("CREATE TABLE IF NOT EXISTS '%s' (date text NULL, trans text, symbol text, qty real, price real)" % topic)
-# c.execute("INSERT INTO '%s' VALUES ('2006-01-05','BUY','RHAT',100,35.14)" % topic)
-# conn.commit()
-# conn.close()

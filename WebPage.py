@@ -7,8 +7,6 @@ import psutil
 from datetime import datetime
 import sqlite3
 
-from includes.SqlMonitor import SqlMonitor
-
 UPLOAD_FOLDER = './data/post'
 ALLOWED_EXTENSIONS = {'txt'}
 
@@ -64,13 +62,6 @@ def getStatus():
             'datetime': str(now)
         }
     )
-
-
-@app.route('/getLast100rows', methods=['GET'])
-def getLast100Rows():
-    data = SqlMonitor.getQuery(
-        'SELECT sensorTime, value FROM (SELECT sensorTime, value FROM temperature WHERE id = "cd14" ORDER BY sensorTime DESC LIMIT 600) ORDER BY sensorTime')
-    return jsonify(data)
 
 @app.route('/<path:filename>')
 def custom_static(filename):

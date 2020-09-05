@@ -200,7 +200,6 @@ def main():
         p1.kill()
         p2.terminate()
         p2.kill()
-
         p3.terminate()
         p3.kill()
         p4.terminate()
