@@ -8,12 +8,25 @@ const getStatusRaspi = () => {
         }
     })
 }
+const getStatusData = () => {
+    $.ajax({
+        url: 'getCounter',
+        success: (respond) => {
+            $("#dataReceived").text(respond.received);
+            $("#dataBlocked").text(respond.blocked);
+            $("#dataSent").text(respond.sent);
+            $("#dataNow").text(respond.time);
+        }
+    })
+}
 
 $('#data').scrollTop(1000000);
 
 getStatusRaspi();
+getStatusData();
 setInterval(() => {
     getStatusRaspi();
+    getStatusData();
 }, 5000)
 
 setInterval(() => {
@@ -34,8 +47,13 @@ client.onMessageArrived = function (message) {
 }
 // Called when the connection is made
 function onConnect(){
-    console.log("Connected!");
+    console.log("Client is connected!");
     client.subscribe("temperature")
+    client.subscribe("hummidity")
+    client.subscribe("pressure")
+    client.subscribe("pm10")
+    client.subscribe("co")
+    client.subscribe("co2")
 }
 // Connect the client, providing an onConnect callback
 client.connect({

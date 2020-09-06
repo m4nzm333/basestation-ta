@@ -6,6 +6,7 @@ from gpiozero import CPUTemperature
 import psutil
 from datetime import datetime
 import sqlite3
+from includes.CounterData import CounterData
 
 UPLOAD_FOLDER = './data/post'
 ALLOWED_EXTENSIONS = {'txt'}
@@ -62,6 +63,17 @@ def getStatus():
             'datetime': str(now)
         }
     )
+
+@app.route('/getCounter', methods=['GET'])
+def getCounter():
+    date = request.args.get("date")
+    return jsonify(CounterData.getCounter(date))
+
+@app.route('/clearCounter', methods=['GET'])
+def clearCounter():
+    CounterData.clearCounter()
+    return redirect('/')
+
 
 @app.route('/<path:filename>')
 def custom_static(filename):
