@@ -35,7 +35,7 @@ def checkValid(sensor, data):
         return False
     if sensor == 'co' and value <= 0:
         return False
-    if sensor == 'pm10' and value <= 0:
+    if sensor == 'pm10' and value < 0:
         return False
 
     return True

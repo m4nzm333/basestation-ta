@@ -1,6 +1,6 @@
 {
     "serverOn" : true,
     "serverHostname" : "182.23.82.22",
-    "serverDelay" : 0.001,
-    "sensorOn" : true
+    "serverDelay" : 0,
+    "sensorOn" : false
 }

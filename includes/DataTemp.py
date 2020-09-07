@@ -43,6 +43,8 @@ def getOldestData():
         return []
     year.sort()
     doc = os.listdir('temp/'+year[0])
+    if len(doc) == 0:
+        return []
     doc.sort()
     document = 'temp/{}/{}'.format(year[0], doc[0])
     if isFileUsed(document):
@@ -58,6 +60,8 @@ def delOldestData():
         return
     year.sort()
     doc = os.listdir('temp/'+year[0])
+    if len(doc) == 0:
+        return
     doc.sort()
     document = 'temp/{}/{}'.format(year[0], doc[0])
     if os.path.isfile(document):

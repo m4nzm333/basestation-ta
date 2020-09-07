@@ -50,6 +50,7 @@ def publishTempToServer():
                     message = "{},{},{},{},{}".format(
                         timeSensor, value, lat, lon, idSensor)
                     raspiPublisher.publish(topic, message)
+                    CounterData.upSent()
                     print("|  Publish   |\33[32m  valid    \033[0m| {} | {}".format(
                         topic, message))
                     time.sleep(configServerDelay())
