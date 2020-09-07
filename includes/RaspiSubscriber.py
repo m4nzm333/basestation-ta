@@ -7,12 +7,12 @@
 import paho.mqtt.client as mqtt
 from datetime import datetime
 import logging
-from includes.Datalog import Datalog
-from includes.DataTemp import DataTemp
 from includes.SqlMonitor import SqlMonitor
 from includes.CounterData import CounterData
-from includes.DataUtils import DataUtils
+from includes.DataUtils import checkValid
 from includes.CounterData import CounterData
+from includes.Datalog import logWrite
+from includes.DataTemp import tempWrite
 
 # Class for Raspberry Subscriber
 
@@ -50,30 +50,22 @@ class RaspiSubscriber:
 
     # Read Data Function
     def on_message(self, mosq, obj, msg):
-        nowString = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
-        sensorMsg = msg.payload.decode('utf-8')
+        now = str(datetime.now())
+        message = msg.payload.decode('utf-8')
+        topic = msg.topic
 
         CounterData.upReceived()
-        try:
-            Datalog.writeStringToFile(DataUtils.subscriberPayloadToStringLog(
-                msg.topic, sensorMsg, nowString), sensorMsg.split(',')[0])
-            splitter = sensorMsg.split(',')
-            if len(splitter) == 6 and splitter[0] != '2000-00-00 08:00:00.484000':
-                DataTemp.writeStringToFile(
-                    DataUtils.subscriberPayloadToStringTemp(msg.topic, sensorMsg))
-                SqlMonitor.sqlWrite(msg.topic, sensorMsg, nowString)
-                print("| Received |\33[32m  valid    \033[0m| {} | {}".format(
-                    msg.topic, sensorMsg))
-            else:
-                print("| Received |\033[91m invalid! \033[0m| {} | {}".format(
-                    msg.topic, sensorMsg))
-                CounterData.upBlocked()
+        logWrite(topic, now+','+message)
 
-        except:
-            print("| Received |\033[91m invalid! \033[0m| {} | {}".format(
-                msg.topic, sensorMsg))
+        if checkValid(topic, message):
+            SqlMonitor.sqlWrite(topic, message, now)
+            tempWrite(topic, message)
+            print("|  Received  |\33[32m  valid    \033[0m| {} | {}".format(
+                topic, message))
+        else:
+            print("|  Received  |\033[91m invalid! \033[0m| {} | {}".format(
+                msg.topic, message))
             CounterData.upBlocked()
-            pass
 
     # Show error if connection unsuccessful
 
