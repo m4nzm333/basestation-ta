@@ -64,10 +64,12 @@ def getStatus():
         }
     )
 
+
 @app.route('/getCounter', methods=['GET'])
 def getCounter():
     date = request.args.get("date")
     return jsonify(CounterData.getCounter(date))
+
 
 @app.route('/clearCounter', methods=['GET'])
 def clearCounter():

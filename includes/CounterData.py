@@ -104,7 +104,14 @@ class CounterData:
     def clearCounter(date=None):
         if os.path.exists('./db/counter.db'):
             if date is None:
-                os.remove("./db/counter.db")
+                now = datetime.now()
+                date = datetime.strftime(now, "%Y-%m-%d")
+                conn = sqlite3.connect(
+                    './db/counter.db')
+                cursor = conn.cursor()
+                cursor.execute("UPDATE counter SET received = 0, blocked = 0, sent = 0 WHERE time='{}'".format(date))
+                conn.commit()
+                conn.close()
             else:
                 conn = sqlite3.connect(
                     './db/counter.db')

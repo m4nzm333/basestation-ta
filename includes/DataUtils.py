@@ -56,20 +56,6 @@ class DataUtils:
         # If Valid Return True
         return True
 
-    # Check if data is not negativ or 0 using raw value(string, float)
-    @ staticmethod
-    def checkDataValidRaw(name, value):
-        # TODO : Fix the filter paramter
-        switcher = {
-            'temperature': False if float(value) <= 0 else True,
-            'humidity': False if float(value) <= 0 else True,
-            'pressure': False if float(value) <= 0 else True,
-            'co2': False if float(value) <= 0 else True,
-            'co': False if float(value) <= 0 else True,
-            'pm10': False if float(value) < 0 else True  # Bisa bernilai 0
-        }
-        return switcher.get(name, True)
-
 
 # Debug
 # now = datetime.now()

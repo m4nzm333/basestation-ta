@@ -16,7 +16,7 @@ from includes.SqlMonitor import SqlMonitor
 from includes.RaspiSubscriber import RaspiSubscriber
 from includes.RaspiPublisher import RaspiPublisher
 from includes.SensorBME280 import SensorBME280
-from includes.Config import configServerDelay, configServerHostname, configSensor
+from includes.Config import configServerDelay, configServerHostname, configSensor, configServer
 from gps3 import agps3
 import json
 from includes.GPS import getLat, getLong
@@ -33,36 +33,38 @@ def subscribe():
 
 def publishTempToServer():
     # Main funtion for Publisher with Server at config.json
-    raspiPublisher = RaspiPublisher(configServerHostname(), 1883, "bs-cd14")
-    while 1:
-        raspiPublisher.mqttClient.loop_start()
-        while raspiPublisher.mqttClient.is_connected():
-            lastArray = DataTemp.getArrayLastData()
-            # Loop foreach data in Array
-            try:
-                for data in lastArray:
-                    idSensor, topic, value, lat, longit, timeSensor, timeReceived = data.split(
-                        ',')
-                    # Filter if Valid
-                    msg = '{},{},{},{},{}'.format(
-                        timeSensor, value, lat, longit, idSensor)
-                    if DataUtils.checkDataValid(topic, value):
-                        raspiPublisher.publish(topic, msg)
-                        SqlMonitor.sqlUpdate(
-                            idSensor, timeSensor, topic, str(datetime.now()))
-                        print(
-                            "| Publish  |\33[32m  valid    \033[0m| {} | {}".format(topic, msg))
-                        CounterData.upSent()
-                    else:
-                        CounterData.upBlocked()
-                        print(
-                            "| Publish  |\033[91m  invalid! \033[0m| {} | {}".format(topic, msg))
-                    time.sleep(configServerDelay)
-            except:
-                pass
+    if configServer():
+        raspiPublisher = RaspiPublisher(
+            configServerHostname(), 1883, "bs-cd14")
+        while 1:
+            raspiPublisher.mqttClient.loop_start()
+            while raspiPublisher.mqttClient.is_connected():
+                lastArray = DataTemp.getArrayLastData()
+                # Loop foreach data in Array
+                try:
+                    for data in lastArray:
+                        idSensor, topic, value, lat, longit, timeSensor, timeReceived = data.split(
+                            ',')
+                        # Filter if Valid
+                        msg = '{},{},{},{},{}'.format(
+                            timeSensor, value, lat, longit, idSensor)
+                        if DataUtils.checkDataValid(topic, value):
+                            raspiPublisher.publish(topic, msg)
+                            SqlMonitor.sqlUpdate(
+                                idSensor, timeSensor, topic, str(datetime.now()))
+                            print(
+                                "| Publish  |\33[32m  valid    \033[0m| {} | {}".format(topic, msg))
+                            CounterData.upSent()
+                        else:
+                            CounterData.upBlocked()
+                            print(
+                                "| Publish  |\033[91m  invalid! \033[0m| {} | {}".format(topic, msg))
+                        time.sleep(configServerDelay)
+                except:
+                    pass
 
-            DataTemp.deleteLastData()
-            time.sleep(0.1)
+                DataTemp.deleteLastData()
+                time.sleep(0.1)
 
 
 def getBME280():

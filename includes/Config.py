@@ -1,6 +1,12 @@
 import json
 
 
+def configServer():
+    config = open('./config/config.json', 'r')
+    config = json.load(config)
+    return bool(config['serverOn'])
+
+
 def configServerHostname():
     config = open('./config/config.json', 'r')
     config = json.load(config)
