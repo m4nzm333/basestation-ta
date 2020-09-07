@@ -16,140 +16,51 @@ def dirTemp():
     if not os.path.exists(directory):
         os.makedirs(directory)
 
+
 def tempWrite(topic, data):
     now = datetime.now()
-    sekarang = datetime.strftime(now, "%Y-%m-%d")
+    sekarang = datetime.strftime(now, "%Y-%m-%d %H-%M")
     dirTemp()
     document = 'temp/{}/{}.csv'.format(now.year, sekarang)
     file = open(document, "a")
     file.write("{},{}\n".format(topic, data))
     file.close
 
-# class DataTemp:
 
-#     # Make directory for data now
-#     @staticmethod
-#     def createDirDate(datetime):
-#         try:
-#             os.makedirs("./temp/subscriber/{}/{}/{}/{}/{}".format(datetime.year,
-#                                                                   datetime.month, datetime.day, datetime.hour, datetime.minute))
-#         except:
-#             pass
+def isFileUsed(fpath):
+    for proc in psutil.process_iter():
+        try:
+            for item in proc.open_files():
+                if fpath == item.path:
+                    return True
+        except Exception:
+            pass
+    return False
 
-#     # Output the data (string) into file
-#     @staticmethod
-#     def writeStringToFile(data):
-#         now = datetime.now()
-#         dirLoc = "./temp/subscriber/{}/{}/{}/{}/{}".format(
-#             now.year, now.month, now.day, now.hour, now.minute)
-#         DataTemp.createDirDate(now)
-#         file = open("{}/{}.csv".format(dirLoc,
-#                                        now.strftime("%Y-%m-%d %H:%M:%S")), "a")
-#         file.write(data+'\n')
-#         file.close()
+def getOldestData():
+    year = os.listdir('temp/')
+    year.sort()
+    doc = os.listdir('temp/'+year[0])
+    doc.sort()
+    document = 'temp/{}/{}'.format(year[0], doc[0])
+    if isFileUsed(document):
+        return []
+    else:
+        file = open(document, 'r')
+        data = file.read().splitlines()
+    return data
 
-#     # Get oldest file directory location
-#     @staticmethod
-#     def getDirLastData():
-#         try:
-#             files = os.listdir('./temp/')
-#             year = os.listdir('./temp/{}'.format(files[0]))
-#             year.sort()
-#             month = os.listdir(
-#                 './temp/{}/{}'.format(files[0], year[0]))
-#             month.sort()
-#             day = os.listdir(
-#                 './temp/{}/{}/{}'.format(files[0], year[0], month[0]))
-#             day.sort()
-#             hour = os.listdir(
-#                 './temp/{}/{}/{}/{}'.format(files[0], year[0], month[0], day[0]))
-#             hour.sort()
-#             minute = os.listdir(
-#                 './temp/{}/{}/{}/{}/{}'.format(files[0], year[0], month[0], day[0], hour[0]))
-#             minute.sort()
-
-#             return './temp/{}/{}/{}/{}/{}/{}'.format(files[0], year[0], month[0], day[0], hour[0], minute[0])
-#         except:
-#             return 'False'
-
-#     # Get array the oldest file content
-#     @staticmethod
-#     def getArrayLastData():
-#         if DataTemp.getDirLastData() != 'False':
-#             if DataTemp.checkFileUsed(DataTemp.getDirLastData()) == False:
-#                 lastFile = open(DataTemp.getDirLastData(), "r")
-#                 lastData = lastFile.readlines()
-#                 return lastData
-#             else:
-#                 return []
-#         else:
-#             return []
-
-#     # Delete Last File and Empty Directory
-#     @staticmethod
-#     def deleteLastData():
-#         try:
-#             os.unlink(DataTemp.getDirLastData())
-#             files = os.listdir('./temp/subscriber')
-#             year = os.listdir('./temp/subscriber/{}'.format(files[0]))
-#             year.sort()
-#             month = os.listdir(
-#                 './temp/subscriber/{}/{}'.format(files[0], year[0]))
-#             month.sort()
-#             day = os.listdir(
-#                 './temp/subscriber/{}/{}/{}'.format(files[0], year[0], month[0]))
-#             day.sort()
-#             hour = os.listdir(
-#                 './temp/subscriber/{}/{}/{}/{}'.format(files[0], year[0], month[0], day[0]))
-#             hour.sort()
-#             minute = os.listdir(
-#                 './temp/subscriber/{}/{}/{}/{}/{}'.format(files[0], year[0], month[0], day[0], hour[0]))
-#             minute.sort()
-
-#             # Delete directory if Empty and Re-listing directory file
-#             if len(minute) == 0:
-#                 os.rmdir(
-#                     './temp/subscriber/{}/{}/{}/{}/{}'.format(files[0], year[0], month[0], day[0], hour[0]))
-#                 hour = os.listdir(
-#                     './temp/subscriber/{}/{}/{}/{}'.format(files[0], year[0], month[0], day[0]))
-#                 hour.sort()
-#             if len(hour) == 0:
-#                 os.rmdir(
-#                     './temp/subscriber/{}/{}/{}/{}'.format(files[0], year[0], month[0], day[0]))
-#                 day = os.listdir(
-#                     './temp/subscriber/{}/{}/{}'.format(files[0], year[0], month[0]))
-#                 day.sort()
-#             if len(day) == 0:
-#                 os.rmdir(
-#                     './temp/subscriber/{}/{}/{}'.format(files[0], year[0], month[0]))
-#                 month = os.listdir(
-#                     './temp/subscriber/{}/{}'.format(files[0], year[0]))
-#                 month.sort()
-#             if len(month) == 0:
-#                 os.rmdir('./temp/subscriber/{}/{}'.format(files[0], year[0]))
-#                 year = os.listdir('./temp/subscriber/{}'.format(files[0]))
-#                 year.sort()
-#             if len(month) == 0:
-#                 os.rmdir('./temp/subscriber/{}'.format(files[0]))
-#         except:
-#             pass
-
-#     # Check if current file not in use
-#     @staticmethod
-#     def checkFileUsed(fpath):
-#         for proc in psutil.process_iter():
-#             try:
-#                 for item in proc.open_files():
-#                     if fpath == item.path:
-#                         print(fpath)
-#                         return True
-#             except Exception:
-#                 pass
-#         return False
-
-# fullPath = '/home/pi/Documents/basestation-ta/data/subscriber/2020/3/25/23/43/2020-03-25 23:43:42.txt'
-# fileOpen = open(fullPath, 'r')
-# print(DataTemp.checkFileUsed(fullPath))
-# fileOpen.close()
-# fileOpen.close()
-# print(DataTemp.checkFileUsed(fullPath))
+def delOldestData():
+    year = os.listdir('temp/')
+    if len(year) == 0:
+        return
+    year.sort()
+    doc = os.listdir('temp/'+year[0])
+    doc.sort()
+    document = 'temp/{}/{}'.format(year[0], doc[0])
+    print(document)
+    if os.path.isfile(document):
+        os.unlink(document)
+    doc = os.listdir('temp/'+year[0])
+    if len(doc) == 0:
+        os.rmdir('temp/'+year[0])
