@@ -19,7 +19,7 @@ def dirTemp():
 
 def tempWrite(topic, data):
     now = datetime.now()
-    sekarang = datetime.strftime(now, "%Y-%m-%d %H-%M")
+    sekarang = datetime.strftime(now, "%Y-%m-%d %H-%M-%S")
     dirTemp()
     document = 'temp/{}/{}.csv'.format(now.year, sekarang)
     file = open(document, "a")
@@ -39,6 +39,8 @@ def isFileUsed(fpath):
 
 def getOldestData():
     year = os.listdir('temp/')
+    if len(year) == 0:
+        return []
     year.sort()
     doc = os.listdir('temp/'+year[0])
     doc.sort()
@@ -58,7 +60,6 @@ def delOldestData():
     doc = os.listdir('temp/'+year[0])
     doc.sort()
     document = 'temp/{}/{}'.format(year[0], doc[0])
-    print(document)
     if os.path.isfile(document):
         os.unlink(document)
     doc = os.listdir('temp/'+year[0])

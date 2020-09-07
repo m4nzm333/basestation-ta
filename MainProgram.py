@@ -4,19 +4,23 @@
 # Ask a question, please contact:
 # e-mail    : irman.mashuri@gmail.com
 
-
 import time
 from multiprocessing import Process
 from datetime import datetime
 
 from includes.Datalog import logWrite
-from includes.DataTemp import tempWrite
+from includes.DataTemp import tempWrite, getOldestData, delOldestData
 from includes.DataUtils import checkValid
 from includes.SqlMonitor import SqlMonitor
 from includes.RaspiSubscriber import RaspiSubscriber
 from includes.RaspiPublisher import RaspiPublisher
 from includes.SensorBME280 import SensorBME280
-from includes.Config import configServerDelay, configServerHostname, configSensor, configServer
+from includes.Config import (
+    configServerDelay,
+    configServerHostname,
+    configSensor,
+    configServer,
+)
 from gps3 import agps3
 import json
 from includes.GPS import getLat, getLong
@@ -28,7 +32,7 @@ import sys
 
 def subscribe():
     # Main funtion for Subscriber with Server to listen at local broker
-    RaspiSubscriber('127.0.0.1', 1883, "bs-cd14")
+    RaspiSubscriber("127.0.0.1", 1883, "bs-cd14")
 
 
 def publishTempToServer():
@@ -39,32 +43,18 @@ def publishTempToServer():
         while 1:
             raspiPublisher.mqttClient.loop_start()
             while raspiPublisher.mqttClient.is_connected():
-                lastArray = DataTemp.getArrayLastData()
-                # Loop foreach data in Array
-                try:
-                    for data in lastArray:
-                        idSensor, topic, value, lat, longit, timeSensor, timeReceived = data.split(
-                            ',')
-                        # Filter if Valid
-                        msg = '{},{},{},{},{}'.format(
-                            timeSensor, value, lat, longit, idSensor)
-                        if DataUtils.checkDataValid(topic, value):
-                            raspiPublisher.publish(topic, msg)
-                            SqlMonitor.sqlUpdate(
-                                idSensor, timeSensor, topic, str(datetime.now()))
-                            print(
-                                "| Publish  |\33[32m  valid    \033[0m| {} | {}".format(topic, msg))
-                            CounterData.upSent()
-                        else:
-                            CounterData.upBlocked()
-                            print(
-                                "| Publish  |\033[91m  invalid! \033[0m| {} | {}".format(topic, msg))
-                        time.sleep(configServerDelay)
-                except:
-                    pass
-
-                DataTemp.deleteLastData()
-                time.sleep(0.1)
+                data = getOldestData()
+                for line in data:
+                    topic, timeSensor, sendTime, value, lat, lon, idSensor = line.split(
+                        ",")
+                    message = "{},{},{},{},{}".format(
+                        timeSensor, value, lat, lon, idSensor)
+                    raspiPublisher.publish(topic, message)
+                    print("|  Publish   |\33[32m  valid    \033[0m| {} | {}".format(
+                        topic, message))
+                    time.sleep(configServerDelay())
+                delOldestData()
+                time.sleep(configServerDelay())
 
 
 def getBME280():
@@ -72,38 +62,38 @@ def getBME280():
     if configSensor():
         sensorBME280 = SensorBME280()
         while True:
-            now = datetime.now()
-            nowString = now.strftime("%Y-%m-%d %H:%M:%S.%f")
+            now = str(datetime.now())
             valTemp = round(sensorBME280.getTemperature(), 2)
             valHum = round(sensorBME280.getHumidity(), 2)
             valPres = round(sensorBME280.getPressure(), 2)
 
             lat = getLat()
-            longit = getLong()
-
-            Datalog.writeStringToFile("{},{},{},{},{},{},{}".format(
-                'cd14', 'temperature', valTemp, lat, longit, nowString, ''), nowString)
-            Datalog.writeStringToFile("{},{},{},{},{},{},{}".format(
-                'cd14', 'humidity', valHum, lat, longit, nowString, ''), nowString)
-            Datalog.writeStringToFile("{},{},{},{},{},{},{}".format(
-                'cd14', 'pressure', valPres, lat, longit, nowString, ''), nowString)
-            # Datalog.writeStringToFile("{},{},{},{},{},{},{}".format(
-            #     'cd14', 'altitude', valTemp, '', '', nowString, ''), nowString)
-
-            DataTemp.writeStringToFile("{},{},{},{},{},{},{}".format(
-                'cd14', 'temperature', valTemp, lat, longit, nowString, ''))
-            DataTemp.writeStringToFile("{},{},{},{},{},{},{}".format(
-                'cd14', 'humidity', valHum, lat, longit, nowString, ''))
-            DataTemp.writeStringToFile("{},{},{},{},{},{},{}".format(
-                'cd14', 'pressure', valPres, lat, longit, nowString, ''))
-            # DataTemp.writeStringToFile("{},{},{},{},{},{},{}".format(
-            #     'cd14', 'temperature', valTemp, '', '', nowString, ''))
-            SqlMonitor.sqlWrite('temperature', "{},{},{},{},{},{}".format(
-                nowString, nowString, valTemp, lat, longit, 'cd14'), nowString)
-            SqlMonitor.sqlWrite('humidity', "{},{},{},{},{},{}".format(
-                nowString, nowString, valHum, lat, longit, 'cd14'), nowString)
-            SqlMonitor.sqlWrite('pressure', "{},{},{},{},{},{}".format(
-                nowString, nowString, valPres, lat, longit, 'cd14'), nowString)
+            lon = getLong()
+            idSensor = "cd14"
+            # Write to Log
+            logWrite("temperature", "{},{},{},{},{},{}".format(
+                now, now, valTemp, lat, lon, idSensor))
+            logWrite("humidity", "{},{},{},{},{},{}".format(
+                now, now, valHum, lat, lon, idSensor))
+            logWrite("pressure", "{},{},{},{},{},{}".format(
+                now, now, valHum, lat, lon, idSensor))
+            # Write to SQL
+            SqlMonitor.sqlWrite("temperature", "{},{},{},{},{},{}".format(
+                now, now, valTemp, lat, lon, "cd14"), now,)
+            SqlMonitor.sqlWrite("humidity", "{},{},{},{},{},{}".format(
+                now, now, valHum, lat, lon, "cd14"), now)
+            SqlMonitor.sqlWrite("pressure", "{},{},{},{},{},{}".format(
+                now, now, valPres, lat, lon, idSensor), now)
+            # Write to Temp
+            if valTemp != 0:
+                tempWrite("temperature", "{},{},{},{},{},{}".format(
+                    now, now, valTemp, lat, lon, idSensor),)
+            if valHum != 0:
+                tempWrite("humidity", "{},{},{},{},{},{}".format(
+                    now, now, valHum, lat, lon, idSensor))
+            if valPres != 0:
+                tempWrite("pressure", "{},{},{},{},{},{}".format(
+                    now, now, valPres, lat, lon, idSensor))
 
             time.sleep(60)
 
@@ -124,17 +114,14 @@ def getLocation():
                     if data_stream.lon != "n/a":
                         lon = round(float(data_stream.lon), 6)
                         lat = round(float(data_stream.lat), 6)
-                    # print('Longitude = ', str(lon))
-                    # print('Latitude = ', str(lat))
-                    # print(str(datetime.now()))
                     file = open("config/location.json", "w+")
                     stringLocation = {
                         "lat": str(lat),
                         "long": str(lon),
-                        "update": str(datetime.now())
+                        "update": str(datetime.now()),
                     }
                     file.write(json.dumps(stringLocation, separators=(
-                        ',', ':'), sort_keys=True, indent=4))
+                        ",", ":"), sort_keys=True, indent=4))
                     file.close()
                 time.sleep(5)
         except:
@@ -165,17 +152,20 @@ def getDSM():
             xPPM = ((lowRatio - 5) / m) + 2500
             valPpm = round(xPPM, 0)
 
-            nowString = str(datetime.now())
-
+            now = str(datetime.now())
+            idSensor = 'cd14'
             lat = getLat()
-            longit = getLong()
+            lon = getLong()
 
-            Datalog.writeStringToFile("{},{},{},{},{},{},{}".format(
-                'cd14', 'ppm10', valPpm, lat, longit, nowString, ''), nowString)
-            DataTemp.writeStringToFile("{},{},{},{},{},{},{}".format(
-                'cd14', 'ppm10', valPpm, lat, longit, nowString, ''))
-            SqlMonitor.sqlWrite('ppm10', "{},{},{},{},{},{}".format(
-                nowString, nowString, valPpm, lat, longit, 'cd14'), nowString)
+            # Write Log
+            logWrite("pm10", "{},{},{},{},{},{}".format(
+                now, now, valPpm, lat, lon, idSensor))
+            # Write to SQL
+            SqlMonitor.sqlWrite("pm10", "{},{},{},{},{},{}".format(
+                now, now, valPpm, lat, lon, "cd14"), now,)
+            if valPpm != 0:
+                tempWrite("pm10", "{},{},{},{},{},{}".format(
+                    now, now, valPpm, lat, lon, idSensor),)
 
 
 def main():
@@ -213,5 +203,5 @@ def main():
 # ----------------
 #       MAIN
 # ----------------
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
