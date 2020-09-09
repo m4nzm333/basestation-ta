@@ -7,7 +7,7 @@
 import paho.mqtt.client as mqtt
 from datetime import datetime
 import logging
-from includes.SqlMonitor import SqlMonitor
+from includes.SqlMonitor import sqlWrite
 from includes.CounterData import CounterData
 from includes.DataUtils import checkValid
 from includes.CounterData import CounterData
@@ -58,10 +58,10 @@ class RaspiSubscriber:
         logWrite(topic, now+','+message)
 
         if checkValid(topic, message):
-            SqlMonitor.sqlWrite(topic, message, now)
             tempWrite(topic, message)
             print("|  Received  |\33[32m  valid    \033[0m| {} | {}".format(
                 topic, message))
+            sqlWrite(topic, message, now)
         else:
             print("|  Received  |\033[91m invalid! \033[0m| {} | {}".format(
                 msg.topic, message))

@@ -11,7 +11,7 @@ from datetime import datetime
 from includes.Datalog import logWrite
 from includes.DataTemp import tempWrite, getOldestData, delOldestData
 from includes.DataUtils import checkValid
-from includes.SqlMonitor import SqlMonitor
+from includes.SqlMonitor import sqlWrite, sqlUpdate
 from includes.RaspiSubscriber import RaspiSubscriber
 from includes.RaspiPublisher import RaspiPublisher
 from includes.SensorBME280 import SensorBME280
@@ -51,6 +51,8 @@ def publishTempToServer():
                         timeSensor, value, lat, lon, idSensor)
                     raspiPublisher.publish(topic, message)
                     CounterData.upSent()
+                    now = str(datetime.now())
+                    sqlUpdate(idSensor, timeSensor, topic, now)
                     print("|  Publish   |\33[32m  valid    \033[0m| {} | {}".format(
                         topic, message))
                     time.sleep(configServerDelay())
@@ -79,11 +81,11 @@ def getBME280():
             logWrite("pressure", "{},{},{},{},{},{}".format(
                 now, now, valHum, lat, lon, idSensor))
             # Write to SQL
-            SqlMonitor.sqlWrite("temperature", "{},{},{},{},{},{}".format(
+            sqlWrite("temperature", "{},{},{},{},{},{}".format(
                 now, now, valTemp, lat, lon, "cd14"), now,)
-            SqlMonitor.sqlWrite("humidity", "{},{},{},{},{},{}".format(
+            sqlWrite("humidity", "{},{},{},{},{},{}".format(
                 now, now, valHum, lat, lon, "cd14"), now)
-            SqlMonitor.sqlWrite("pressure", "{},{},{},{},{},{}".format(
+            sqlWrite("pressure", "{},{},{},{},{},{}".format(
                 now, now, valPres, lat, lon, idSensor), now)
             # Write to Temp
             if valTemp != 0:
@@ -162,7 +164,7 @@ def getDSM():
             logWrite("pm10", "{},{},{},{},{},{}".format(
                 now, now, valPpm, lat, lon, idSensor))
             # Write to SQL
-            SqlMonitor.sqlWrite("pm10", "{},{},{},{},{},{}".format(
+            sqlWrite("pm10", "{},{},{},{},{},{}".format(
                 now, now, valPpm, lat, lon, "cd14"), now,)
             if valPpm != 0:
                 tempWrite("pm10", "{},{},{},{},{},{}".format(
