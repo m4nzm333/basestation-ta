@@ -7,7 +7,6 @@
 import sqlite3
 from datetime import datetime
 import os
-import logging
 
 def createDir():
     directory = 'db/data'
@@ -25,7 +24,6 @@ def sqlWrite(topic, data, recTime):
     c.execute("CREATE TABLE IF NOT EXISTS data (sensorTime text NULL, sensorSend TEXT NULL, receivedTime text NULL, sendTime text NULL, topic text, id text, value text, lat NULL, long NULL)")
     query = "INSERT INTO data values ('{}', '{}', '{}', '', '{}', '{}', '{}', '{}', '{}')".format(sensorTime, sensorSend, recTime, topic, idSensor, value, lat, lon)
     c.execute(query)
-    print(query)
     conn.commit()
     conn.close()
     
@@ -35,8 +33,8 @@ def sqlUpdate(idSensor, sensorDateStr, topic, sendTime):
         './db/data/{}.db'.format(now))
     c = conn.cursor()
 
-    query = 'UPDATE {} SET sendTime = "{}" WHERE id = "{}" AND sensorTime = "{}"'.format(
-        topic, sendTime, idSensor, sensorDateStr)
+    query = 'UPDATE data SET sendTime = "{}" WHERE id = "{}" AND sensorTime = "{}" AND topic = "{}"'.format(
+        sendTime, idSensor, sensorDateStr, topic)
     c.execute(query)
     conn.commit()
     conn.close()

@@ -1,0 +1,136 @@
+[
+    {
+        "id": "cd14",
+        "parameter": [
+            {
+                "name": "temperature",
+                "calibration": 0
+            },
+            {
+                "name": "humidity",
+                "calibration": 0
+            },
+            {
+                "name": "pressure",
+                "calibration": 0
+            },
+            {
+                "name": "pm10",
+                "calibration": 0
+            }
+        ]
+    },
+    {
+        "id": "015e",
+        "parameter": [
+            {
+                "name": "co",
+                "calibration": 0
+            },
+            {
+                "name": "so",
+                "calibration": 0
+            },
+            {
+                "name": "pm10",
+                "calibration": 0
+            }
+        ]
+    },
+    {
+        "id": "025f",
+        "parameter": [
+            {
+                "name": "temperature",
+                "calibration": 0
+            },
+            {
+                "name": "humidity",
+                "calibration": 0
+            },
+            {
+                "name": "pressure",
+                "calibration": 0
+            },
+            {
+                "name": "altitude",
+                "calibration": 0
+            }
+        ]
+    },
+    {
+        "id": "3F0D",
+        "parameter": [
+            {
+                "name": "co2",
+                "calibration": 0
+            },
+            {
+                "name": "co",
+                "calibration": 0
+            },
+            {
+                "name": "temperature",
+                "calibration": 0
+            },
+            {
+                "name": "humidity",
+                "calibration": 0
+            },
+            {
+                "name": "pm10",
+                "calibration": 0
+            }
+        ]
+    },
+    {
+        "id": "C7CD",
+        "parameter": [
+            {
+                "name": "co2",
+                "calibration": 0
+            },
+            {
+                "name": "co",
+                "calibration": 0
+            },
+            {
+                "name": "temperature",
+                "calibration": 0
+            },
+            {
+                "name": "humidity",
+                "calibration": 0
+            },
+            {
+                "name": "pm10",
+                "calibration": 0
+            }
+        ]
+    },
+    {
+        "id": "25DC",
+        "parameter": [
+            {
+                "name": "co2",
+                "calibration": 0
+            },
+            {
+                "name": "co",
+                "calibration": 0
+            },
+            {
+                "name": "temperature",
+                "calibration": 0
+            },
+            {
+                "name": "humidity",
+                "calibration": 0
+            },
+            {
+                "name": "pm10",
+                "calibration": 0
+            }
+        ]
+    }
+]

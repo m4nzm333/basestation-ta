@@ -11,7 +11,9 @@ from datetime import datetime
 
 from includes.Datalog import logWrite
 from includes.DataTemp import tempWrite, getOldestData, delOldestData
-from includes.DataUtils import checkValid, calibrateValue
+from includes.DataUtils import checkValid
+from includes.SqlMonitor import sqlWrite, sqlUpdate
+from includes.RaspiPublisher import RaspiPublisher
 from includes.SensorBME280 import SensorBME280
 from includes.Config import configServerDelay, configServerHostname, configSensor, configServer, configTopic
 from gps3 import agps3
@@ -21,58 +23,49 @@ from gpiozero import Button
 import RPi.GPIO as GPIO
 from includes.CounterData import CounterData
 import sys
-import socket
 
 # MQTT Client Instance
 mqttCSub = mqtt.Client("bs-cd14")
+mqttCSubState = False
 mqttCPub1 = mqtt.Client("cd14-1")
+mqttCPub1State = False
 mqttCPub2 = mqtt.Client("cd14-2")
+mqttCPub2State = False
 
-# Check Connection
-def checkConnection(host, port=1883):
-    a_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    location = (host, port)
-    result_of_check = a_socket.connect_ex(location)
-    if result_of_check == 0:
-        return True
-    else:
-        return False
 # Untuk On Connect Pub
 def pubOnConnect(client, userdata, flag, rc):
+    global mqttCPub1State
+    mqttCPub1State = True
     print("Pub Connected with result code "+str(rc))
-    if rc == 0:
-        print("Ready to Publish")
+    print("Ready to Publish")
 def pubOnDisconnect(client, userdata, rc):
-    print("Publihser Disconnected")
+    global mqttCPub1State
+    mqttCPub1State =  False
+    print("disconnected")
 # Sub On Connects
 def subOnConnect(client, userdata, flag, rc):
     client.subscribe(configTopic())
     print("Sub Connected with result code "+str(rc))
-    if rc == 0:
-        print("Ready to read data")
+    print("Ready to read data")
+    global mqttCSubState
+    mqttCSubState =  True
 # Sub On Messages
 def subOnMessage(mosq, obj, msg):
     now = str(datetime.now())
     message = msg.payload.decode('utf-8')
     idSensor, parameter = msg.topic.split('/')
     CounterData.upReceived()
+    logWrite(parameter, now+','+message+','+idSensor)
     # Jika Server terkoneksi
     if checkValid(parameter, message):
-        # Calibrate Value
-        timeSensor, value, lat, lon = message.split(',')
-        value = calibrateValue(idSensor, parameter, value)
-        message = "{},{},{},{}".format(timeSensor, value, lat, lon)
-        logWrite(parameter, now+','+message+','+idSensor)
-        if mqttCPub1.is_connected() and configServer():
+        if mqttCPub1State:
             mqttCPub1.publish(idSensor+'/'+parameter, message)
-            print("| Published |\33[32m  valid  \033[0m| {} | {}".format(msg.topic, message))
         else:
-            tempWrite(parameter, message+","+idSensor)
+            tempWrite(parameter, message)
             print("|  Pending |\33[32m  valid  \033[0m| {} | {}".format(msg.topic, message))
     else:
         print("|  Blocked |\033[91m invalid! \033[0m| {} | {}".format(msg.topic, message))
         CounterData.upBlocked()
-        
 # Main Function for Subscribe
 def subscribe():
     mqttCSub.on_connect = subOnConnect
@@ -80,10 +73,6 @@ def subscribe():
     mqttCPub1.on_connect = pubOnConnect
     mqttCPub1.on_disconnect = pubOnDisconnect
     try:
-        if configServer():
-            print("connecting to Pub1 "+configServerHostname())
-            mqttCPub1.connect_async(configServerHostname(), 1883, 30)
-            mqttCPub1.loop_start()
         print("Connecting Sub to 127.0.0.1")
         mqttCSub.connect("127.0.0.1", 1883, 30)
         mqttCSub.loop_forever()
@@ -93,25 +82,25 @@ def subscribe():
     # # Main funtion for Subscriber with Server to listen at local broker
     # RaspiSubscriber("127.0.0.1", 1883, "bs-cd14")
 
-def publisher():
-    mqttCPub2.on_connect = pubOnConnect
-    mqttCPub2.on_disconnect = pubOnDisconnect
-    if configServer():
-        mqttCPub2.connect_async(configServerHostname(), 1883, 40)
-        mqttCPub2.loop_start()
-        while 1:
-            while mqttCPub2.is_connected():
-                data = getOldestData()
-                delOldestData()
-                for line in data:
-                    topic, timeSensor, value, lat, lon, idSensor = line.split(",")
-                    message = "{},{},{},{}".format(timeSensor, value, lat, lon)
-                    mqttCPub2.publish(idSensor+'/'+topic, message)
-                    CounterData.upSent()
-                    print("| Published |\33[32m  valid  \033[0m| {} | {}".format(topic, message))
-                    time.sleep(configServerDelay())
-                time.sleep(configServerDelay())
-            mqttCPub2.loop_stop()
+def publishTempToServer():
+    print('none')
+    # Main funtion for Publisher with Server at config.json
+    # if configServer():
+    #     raspiPublisher = RaspiPublisher(configServerHostname(), 1883, "bs-cd14")
+    #     while 1:
+    #         raspiPublisher.mqttClient.loop_start()
+    #         while raspiPublisher.mqttClient.is_connected():
+    #             data = getOldestData()
+    #             delOldestData()
+    #             for line in data:
+    #                 topic, timeSensor, value, lat, lon, idSensor = line.split(",")
+    #                 message = "{},{},{},{}".format(timeSensor, value, lat, lon)
+    #                 raspiPublisher.publish(idSensor+'/'+topic, message)
+    #                 CounterData.upSent()
+    #                 print("|  Publish   |\33[32m  valid  \033[0m| {} | {}".format(topic, message))
+    #                 time.sleep(configServerDelay())
+    #             time.sleep(configServerDelay())
+    #         raspiPublisher.mqttClient.loop_stop()
 
 def getBME280():
     # Get Data From BME280
@@ -207,7 +196,7 @@ def main():
     try:
         # Function
         p1 = Process(target=subscribe)
-        p2 = Process(target=publisher)
+        p2 = Process(target=publishTempToServer)
         p3 = Process(target=getBME280)
         p4 = Process(target=getLocation)
         p5 = Process(target=getDSM)

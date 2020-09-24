@@ -9,7 +9,6 @@
 
 import smbus2
 import bme280
-import logging
 
 class SensorBME280:
 
@@ -17,16 +16,12 @@ class SensorBME280:
     address = 0x76
     bus = smbus2.SMBus(port)
     calibration_params = bme280.load_calibration_params(bus, address)
-
-    def __init__(self):
-        logging.basicConfig(filename='./log/bme280.log', format='%(asctime)s %(message)s', level=logging.DEBUG)
             
     def getTemperature(self):
         try:
             data = bme280.sample(self.bus, self.address, self.calibration_params)
             return data.temperature
         except:
-            logging.exception("BME280: Get temperature failed")
             return 0
             
     def getPressure(self):
@@ -34,7 +29,6 @@ class SensorBME280:
             data = bme280.sample(self.bus, self.address, self.calibration_params)
             return data.pressure
         except:
-            logging.exception("BME280: Get pressure failed")
             return 0
             
     def getHumidity(self):
@@ -42,5 +36,4 @@ class SensorBME280:
             data = bme280.sample(self.bus, self.address, self.calibration_params)
             return data.humidity
         except:
-            logging.exception("BME280: Get humidity failed")
             return 0

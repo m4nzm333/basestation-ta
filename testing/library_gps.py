@@ -16,4 +16,4 @@ for new_data in gps_socket:
         print('Longitude = ', str(lon))
         print('Latitude = ', str(lat))
         print(str(datetime.now()))
-    time.sleep(5)
+    time.sleep(0.1)
