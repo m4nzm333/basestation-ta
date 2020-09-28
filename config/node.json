@@ -63,23 +63,23 @@
         "parameter": [
             {
                 "name": "co2",
-                "calibration": 0
+                "calibration": 1.3
             },
             {
                 "name": "co",
-                "calibration": 0
+                "calibration": 0.02
             },
             {
                 "name": "temperature",
-                "calibration": 0
+                "calibration": -0.2
             },
             {
                 "name": "humidity",
-                "calibration": 0
+                "calibration": 5
             },
             {
                 "name": "pm10",
-                "calibration": 0
+                "calibration": 81
             }
         ]
     },

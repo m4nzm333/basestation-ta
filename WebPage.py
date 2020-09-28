@@ -81,4 +81,4 @@ def clearCounter():
 def custom_static(filename):
     return send_from_directory('./webdoc/static/', filename)
 
-app.run('10.3.141.1', port=8080, debug=True)
+app.run('0.0.0.0', port=8080, debug=True)

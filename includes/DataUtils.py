@@ -41,6 +41,6 @@ def checkValid(sensor, data):
     return True
 
 def calibrateValue(id, param, value):
-    calibrated = float(value) + configCalibration(id, param)
+    calibrated = round(float(value) + configCalibration(id, param), 2)
     print("| Calibrated | {}, {} , {} => {}".format(id, param, value, calibrated))
     return calibrated

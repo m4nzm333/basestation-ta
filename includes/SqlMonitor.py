@@ -15,7 +15,6 @@ def createDir():
 
 def sqlWrite(topic, data, recTime):
     createDir()
-    sensorTime, sensorSend, value, lat, lon, idSensor= data.split(',')
     now = datetime.now().strftime("%Y-%m-%d")
 
     conn = sqlite3.connect('./db/data/{}.db'.format(now))
