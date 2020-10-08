@@ -7,6 +7,7 @@ import psutil
 from datetime import datetime
 import sqlite3
 from includes.CounterData import CounterData
+import json
 
 UPLOAD_FOLDER = './data/post'
 ALLOWED_EXTENSIONS = {'txt'}
@@ -63,6 +64,22 @@ def getStatus():
             'datetime': str(now)
         }
     )
+
+@app.route('/topic', methods=['GET'])
+def getTopic():
+    config = open('./config/node.json', 'r')
+    config = json.load(config)
+    topic = []
+    for node in config:
+        for param in node['parameter']:
+            topic.append(node['id']+'/'+param['name'])
+    return jsonify(topic)
+
+@app.route('/queue', methods=['GET'])
+def getQueue():
+    queue = open('./config/queue.json', 'r')
+    queue = json.load(queue)
+    return jsonify(queue)
 
 
 @app.route('/getCounter', methods=['GET'])

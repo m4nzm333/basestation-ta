@@ -105,7 +105,7 @@ def publisher():
         raspiPublisher = RaspiPublisher(configServerHostname(), 1883, "bs-cd14")
         while 1:
             raspiPublisher.mqttClient.loop_start()
-            while raspiPublisher.mqttClient.is_connected():
+            while raspiPublisher.mqttClient.is_connected() and queueLength() <  configMaxNode():
                 data = getOldestData()
                 for line in data:
                     param, timeSensor, value, lat, lon, idSensor = line.split(",")
@@ -119,8 +119,11 @@ def publisher():
                 time.sleep(configServerDelay())
 
 def getBME280():
-    while True:
-        if configSensor():
+    mqttCPub2.on_connect = pubOnConnect
+    mqttCPub2.on_disconnect = pubOnDisconnect
+    mqttCPub2.connect(configServerHostname(), 1883, 30)
+    while configSensor():
+        if True:
             sensorBME280 = SensorBME280()
             now = str(datetime.now())
             valTemp = round(sensorBME280.getTemperature(), 2)
@@ -135,9 +138,6 @@ def getBME280():
             logWrite("temperature", "{},{},{},{},{},{}".format(now, now, valTemp, lat, lon, idSensor))
             logWrite("humidity", "{},{},{},{},{},{}".format(now, now, valHum, lat, lon, idSensor))
             logWrite("pressure", "{},{},{},{},{},{}".format(now, now, valPres, lat, lon, idSensor))
-            mqttCPub2.on_connect = pubOnConnect
-            mqttCPub2.on_disconnect = pubOnDisconnect
-            mqttCPub2.connect(configServerHostname(), 1883, 30)
             mqttCPub2.loop_start()
             if queueLength() < configMaxNode():
                 msgTemp = "{},{},{},{}".format(now, valTemp, lat, lon)
@@ -153,7 +153,7 @@ def getBME280():
                 tempWrite("temperature","{},{},{},{},{}".format(now, valTemp, lat, lon, idSensor))
                 tempWrite("humidity", "{},{},{},{},{}".format(now, valHum, lat, lon, idSensor))
                 tempWrite("pressure", "{},{},{},{},{}".format(now, valPres, lat, lon, idSensor))
-        time.sleep(1)
+        time.sleep(2)
 
 def getLocation():
     # Get currenct location in Longitude and Latitude then save to ./config/location.json

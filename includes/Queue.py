@@ -1,10 +1,14 @@
 import json
 from datetime import datetime
+from includes.Config import configMaxNode
 
 def queueLength():
-    config = open('./config/queue.json', 'r')
-    config = json.load(config)
-    return len(config)
+    try:
+        config = open('./config/queue.json', 'r')
+        config = json.load(config)
+        return len(config)
+    except:
+        return configMaxNode()
 
 def queueIsConnected(id):
     config = open('./config/queue.json', 'r')
@@ -31,7 +35,7 @@ def queueUpdate(id):
             "id": id,
             "last" :  str(datetime.now())
         })
-    file = open("config/queue.json", "w+")
+    file = open("./config/queue.json", "w+")
     file.write(json.dumps(update, separators=(",", ":"), sort_keys=True, indent=4))
     file.close()
 
@@ -47,6 +51,6 @@ def queueDelete():
             pass
         else:
             update.append(sensor)
-    file = open("config/queue.json", "w+")
+    file = open("./config/queue.json", "w+")
     file.write(json.dumps(update, separators=(",", ":"), sort_keys=True, indent=4))
     file.close()
